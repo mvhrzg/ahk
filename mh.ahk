@@ -1,6 +1,7 @@
 #Include, %A_ScriptDir%\helpers.ahk
 #Include, %A_ScriptDir%\eclipse.ahk
 #Include, %A_ScriptDir%\eclipseHelper.ahk
+SendMode, Input
 #SingleInstance, force
 
 ; append lines to clipboard
@@ -42,10 +43,10 @@ Return
 Return
 #IfWinNotActive
 ; ----------------------------------------------------------------------------
-^!1:: SendInput, XX1B ; print XX1B - Ctrl + Alt + 1
-^!2:: SendInput, XX1S_ ; print XX1S_ - Ctrl + Alt + 2
-^!3:: SendInput, XX3F ; print XX3F - Ctrl + Alt + 3
-^!c:: SendInput, CRETE- ; Ctrl + Alt + c - print CRETE-
+^!1:: Send, XX1B ; print XX1B - Ctrl + Alt + 1
+^!2:: Send, XX1S_ ; print XX1S_ - Ctrl + Alt + 2
+^!3:: Send, XX3F ; print XX3F - Ctrl + Alt + 3
+^!c:: Send, CRETE- ; Ctrl + Alt + c - print CRETE-
 ; ----------------------------------------------------------------------------
 !f1:: WinMaximize A ; Alt + F1 - maximize current window
 !f2:: WinMinimize A ; Alt + F2 - minimize current window
@@ -53,19 +54,19 @@ Return
 
 ^+v::   ; Ctrl + Shift + v - paste and replace clipboard contents with currently selected text
     storeClipboard(true)
-    SendInput, ^x
+    Send, ^x
     ClipWait, 1.5, 1
-    SendInput, %StoredClip%
+    Send, %StoredClip%
 return
 
 ; ----------------------------------------------------------------------------
 
 ;; makes all selected text upper case
 ^!u::    ; Ctrl + Alt + u
-    SendInput, ^c   ; Ctrl + c
+    Send, ^c   ; Ctrl + c
     ClipWait, 1, 1
     StringUpper, Clipboard, Clipboard
-    SendInput, ^v   ; Ctrl + v
+    Send, ^v   ; Ctrl + v
 Return
 ; ----------------------------------------------------------------------------
 
@@ -77,7 +78,7 @@ Return
     {
         code := q_array[1]
         abbrev := q_array[2]
-        SendInput, %code%%abbrev%
+        Send, %code%%abbrev%
     }
 Return
 ; ----------------------------------------------------------------------------
@@ -88,20 +89,12 @@ Return
 ; ----------------------------------------------------------------------------
 ;; opens a new tab at x3v11:8124 if firefox is open
 #ifWinActive ahk_class MozillaWindowClass
-!^x::   ; Alt + Ctrl + x + wait for 3
-    Input, first, L2 T2, {Enter},,  ; type 3 + Enter
-    if first = 3                	; if typed 3
-        Run, http://x3v11:8124		; run x3v11:8124 in browser
-    else
-        Return
-Return
-
 ;; print pull request template
 !^p::	;Alt + Ctrl + p
-    SendInput, {#} Description {Enter}*{Space}{Enter}{Enter}
-    SendInput, {#} Dependencies {Enter}*{Space}{Enter}{Enter}
-    SendInput, {#} Screenshots {Enter}*{Space}{Enter}{Enter}
-    SendInput, {#} Test Script {Enter}*{Space}{Enter}
+    Send, {#} Description {Enter}*{Space}{Enter}{Enter}
+    Send, {#} Dependencies {Enter}*{Space}{Enter}{Enter}
+    Send, {#} Screenshots {Enter}*{Space}{Enter}{Enter}
+    Send, {#} Test Script {Enter}*{Space}{Enter}
 Return
 #ifWinActive
 ; [end Firefox]

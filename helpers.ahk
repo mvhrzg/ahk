@@ -1,5 +1,6 @@
 #Include, %A_ScriptDir%\mh.ahk
 global StoredClip = ; global Clipboard variable
+SendMode, Input
 #SingleInstance, force
 
 /*
@@ -13,7 +14,7 @@ getText(){
     storeClipboard(true)
     Sleep, 250
     textToGet =
-    SendInput, {ShiftDown}{Home}{ShiftUp}
+    Send, {ShiftDown}{Home}{ShiftUp}
     SendInput , ^x
     ClipWait 1, 1
     textToGet = %Clipboard%
@@ -40,9 +41,9 @@ Return
 ^1::	;Ctrl + 1
 	SetTitleMatchMode, 3
 	#ifWinActive, mh.ahk
-		SendInput, {Enter}
-		SendInput, ^/   ;Ctrl + / 
-		SendInput, {- 76}
+		Send, {Enter}
+		Send, ^/   ;Ctrl + / 
+		Send, {- 76}
 	#ifWinActive
 
 Return
@@ -56,7 +57,7 @@ Return
 ;; count selected characters
 ^#c::   ; Ctrl + Win + c
     storeClipboard(true)
-    SendInput, ^c   ; copy selected content
+    Send, ^c   ; copy selected content
     ClipWait, 1, "text"
     length := StrLen(Clipboard)
     MsgBox, 0, Character length, %length% characters selected, 5

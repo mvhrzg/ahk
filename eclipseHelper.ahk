@@ -1,4 +1,5 @@
 #Include, %A_ScriptDir%\eclipse.ahk
+SendMode, Input
 #SingleInstance, force
 
 ;; instance text helper
@@ -44,5 +45,5 @@ _qlf(contents){
 }
 
 _freeGroup(code){
-    SendInput, FreeGroup %code% : Kill %code%
+    Send, FreeGroup %code% : Kill %code%
 }

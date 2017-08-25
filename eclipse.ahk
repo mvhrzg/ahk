@@ -1,6 +1,7 @@
 #Include, %A_ScriptDir%\eclipseHelper.ahk
 #Include, %A_ScriptDir%\helpers.ahk
 #SingleInstance, force
+SendMode, Input
 
 /*
 * Eclipse context specific hotkeys
@@ -9,12 +10,12 @@
 #ifWinActive ahk_class SWT_Window0
     ;; MAKE
     ^m::    ; Ctrl + m
-        SendInput, Call MAKE('XX1B', '') From XX1S_QLF{Left 20}
+        Send, Call MAKE('XX1B', '') From XX1S_QLF{Left 20}
     Return
 
     ;; REMOVE
     ^r::    ; Ctrl + Alt + r
-        SendInput, Call REMOVE('XX1B', '') From XX1S_QLF{Left 20}
+        Send, Call REMOVE('XX1B', '') From XX1S_QLF{Left 20}
     Return
 
     ;; paste MAKEs as REMOVEs
@@ -53,7 +54,7 @@
         }
 
         ; paste the string
-        SendInput, ^v
+        Send, ^v
         Sleep, 10
         restoreClipboard(true)
     Return
@@ -61,31 +62,25 @@
     ::li::  ; auto-complete hotkey
         instance := getText()
         if (instance){
-            SendInput, Call LOG_INSTANCE(%instance%) From XX1S_QLF
+            Send, Call LOG_INSTANCE(%instance%) From XX1S_QLF
         }else{
-            SendInput, Call LOG_INSTANCE() From XX1S_QLF{Left 15}
+            Send, Call LOG_INSTANCE() From XX1S_QLF{Left 15}
         }
 
     Return
 
-    ; PAD SELECTED TEXT WITH CST_A
-    ^,::    ; Ctrl + ,
-        storeClipboard(true)
-        SendInput, ^x   ; cut
-        ClipWait, 1, 1
+    ; prepend CST_ to text
+    ::cst::
+        Send, CST_
+    Return
 
-        StringUpper, clipboard, clipboard
-        Sleep, 30
-        clipboard = CST_A%clipboard%
-        Sleep, 30
-        SendInput, ^v
-        Sleep, 10
-        restoreClipboard(true)
+    ::cstx::
+        Send, CST_XX1B_
     Return
 
     ;; add test stub
     ^t::    ; Ctrl + t
-        SendInput, Call TEST('') From XX1S_QLF{Left 16}
+        Send, Call TEST('') From XX1S_QLF{Left 16}
     Return
 
     ;; add group description
@@ -96,13 +91,13 @@
         Loop, %length%{
             SendRaw, #
         }
-        SendInput, {Enter}{#}{Space}
-        SendInput, %description%
-        SendInput, {Space}{#}{Enter}
+        Send, {Enter}{#}{Space}
+        Send, %description%
+        Send, {Space}{#}{Enter}
         Loop, %length%{
             SendRaw, #
         }
-        SendInput, {Enter 3}
+        Send, {Enter 3}
     Return
 
 ; ----------------------------------------------------------------------------
@@ -114,9 +109,9 @@
         Input, teardown, T1, {Enter},,
         storeClipboard(false)
         StringUpper, Clipboard, Clipboard
-        SendInput, Subprog %clipboard%{Enter}{Tab}
-        SendInput, Call SETUP_ALL{Enter}
-        SendInput, Call CHECK_EQUAL(1,0, 'test not implemented') From XX1S_QLF{Enter}
+        Send, Subprog %clipboard%{Enter}{Tab}
+        Send, Call SETUP_ALL{Enter}
+        Send, Call CHECK_EQUAL(1,0, 'test not implemented') From XX1S_QLF{Enter}
 
         teardownText = %clipboard%_TEARDOWN
 
@@ -128,26 +123,26 @@
             teardownText = %teardownText%_TEARDOWN
         }
 
-        SendInput, Call %teardownText%{Enter}
-        SendInput, {Home}End
+        Send, Call %teardownText%{Enter}
+        Send, {Home}End
 
         ; if (teardown = "t") {
-        ;     SendInput, {Enter 2}Subprog %teardownText%{Enter 2}End
-        ;     SendInput, {NumpadUp 9}
+        ;     Send, {Enter 2}Subprog %teardownText%{Enter 2}End
+        ;     Send, {NumpadUp 9}
         ; } else{
-        SendInput, {NumpadUp 5}
+        Send, {NumpadUp 5}
         ; }
 
         Gosub, ^.
 
         ; if (teardown = "t"){
-        ;     SendInput, {NumpadDown 10}
+        ;     Send, {NumpadDown 10}
         ; }else{
-        SendInput, {NumpadDown 7}
+        Send, {NumpadDown 7}
         ; }
-        SendInput, {Enter 3}
-        ; SendInput, {F7}
-        SendInput, {NumpadUp}
+        Send, {Enter 3}
+        ; Send, {F7}
+        Send, {NumpadUp}
         restoreClipboard(true)
     Return
 
@@ -155,9 +150,9 @@
     ^b::    ;Ctrl + b
         Input, teardown, T1, {Enter},,
         if (teardown = "t") {
-            SendInput, Call{Space}^v_TEARDOWN
+            Send, Call{Space}^v_TEARDOWN
         } else {
-            SendInput, Call ^v
+            Send, Call ^v
         }
     Return
 
@@ -166,21 +161,21 @@
         Input, code,, {Enter},,
         StringUpper, code, code
         _freeGroup(code)
-        ; SendInput, FreeGroup %code% : Kill %code%
+        ; Send, FreeGroup %code% : Kill %code%
     Return
 
     ;; insert full timing log calls
     ^!t::  ; Ctrl + Alt + t
         Input, logNumber, T3, {Enter},,
-        SendInput, Call START_TIMING_LOG('', %logNumber%) From XX1S_DEBUG{Enter}
-        SendInput, Call ADD_UNTIMED_LOG_LINE('', %logNumber%) From XX1S_DEBUG{Enter}
-        SendInput, Call CLOSE_TIMING_LOG(%logNumber%) From XX1S_DEBUG{Enter}{NumpadUp 3}{Home}{Right 23}
+        Send, Call START_TIMING_LOG('', %logNumber%) From XX1S_DEBUG{Enter}
+        Send, Call ADD_UNTIMED_LOG_LINE('', %logNumber%) From XX1S_DEBUG{Enter}
+        Send, Call CLOSE_TIMING_LOG(%logNumber%) From XX1S_DEBUG{Enter}{NumpadUp 3}{Home}{Right 23}
     Return
 
     ;; insert log_line call
     ^+t::   ; Ctrl + Shift + t
         Input, logNumber, T3, {Enter},,
-        SendInput, Call ADD_UNTIMED_LOG_LINE('', %logNumber%) From XX1S_DEBUG{Home}{Right 27}
+        Send, Call ADD_UNTIMED_LOG_LINE('', %logNumber%) From XX1S_DEBUG{Home}{Right 27}
     Return
 
     ;; insert local file call
@@ -192,7 +187,7 @@
         else if flag = 3
             code = XX3F
         StringRight, table, table, StrLen(table) - 1
-        SendInput, Local File %code%%table%{[}{]}{Left 1}
+        Send, Local File %code%%table%{[}{]}{Left 1}
     Return
 
     ;; print QLF string and run it
@@ -203,7 +198,7 @@
         {
             code := q_array[1]
             abbrev := q_array[2]
-            SendInput, %code%%abbrev%.TESTSUITE{Enter}
+            Send, %code%%abbrev%.TESTSUITE{Enter}
         }
     Return
 
@@ -218,29 +213,29 @@
             name := r_array[3]
 
             identifier := (name ? name : abbrev) ; if name is empty, use abbrev : else, use name
-            SendInput, Local Instance %identifier% Using C_%code%%abbrev% : %identifier% = NewInstance C_%code%%abbrev% AllocGroup null{Enter 2}{Tab}
+            Send, Local Instance %identifier% Using C_%code%%abbrev% : %identifier% = NewInstance C_%code%%abbrev% AllocGroup null{Enter 2}{Tab}
             _freeGroup(identifier)
-            ; SendInput, %identifier%{Enter}
+            ; Send, %identifier%{Enter}
         }
     Return
 
     ;; add comment block in eclipse
     ^.::    ; Ctrl + .
-        SendInput, {#}{*}{*}{Enter}
+        Send, {#}{*}{*}{Enter}
     Return
 
     ;; print INLINE_LOG with comment
     !^d::   ; Alt + Ctrl + d + text to log + Enter
         Input, log,,{Enter},,
         if !log
-            SendInput, Call INLINE_LOG('') From XX1S_QLF{Left 16}
+            Send, Call INLINE_LOG('') From XX1S_QLF{Left 16}
         else
-            SendInput, Call INLINE_LOG('%log%') From XX1S_QLF{Left 15}{-}num$(){Left}
+            Send, Call INLINE_LOG('%log%') From XX1S_QLF{Left 15}{-}num$(){Left}
     Return
 
     ;; print CHECK_EQUAL without comment
     ^+z::   ; Ctrl + Shift + z
-        SendInput, Call CHECK_EQUAL(,, '') From XX1S_QLF{Left 20}
+        Send, Call CHECK_EQUAL(,, '') From XX1S_QLF{Left 20}
     Return
 
     ;; ASETERROR
@@ -268,7 +263,7 @@
                 }else{
                     lineText := "Callmet " . lineText
                 }
-                Send, %lineText%
+                Send, % lineText
             }
             
         }else{
@@ -292,7 +287,7 @@
         {
             code := q_array[1]
             abbrev := q_array[2]
-            SendInput, %code%%abbrev%
+            Send, %code%%abbrev%
         }
     Return
 #ifWinActive
