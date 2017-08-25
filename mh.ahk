@@ -2,8 +2,6 @@
 #Include, %A_ScriptDir%\eclipse.ahk
 #Include, %A_ScriptDir%\eclipseHelper.ahk
 #SingleInstance, force
-; Gosub, initHelperGlobals
-; global StoredClip = "" ; global Clipboard variable
 
 ; append lines to clipboard
 ^+c:: ; Ctrl + Shift + c
@@ -107,18 +105,6 @@ Return
 Return
 #ifWinActive
 ; [end Firefox]
-; ----------------------------------------------------------------------------
-
-
-
-
-
-
-
-
-
-
-; [end Eclipse section]
 ; ----------------------------------------------------------------------------
 
 #ifWinActive ahk_class PX_WINDOW_CLASS

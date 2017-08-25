@@ -244,14 +244,35 @@
     Return
 
     ;; ASETERROR
-    ^!s::   ; Ctrl + Alt + s
-        Input, error, T4,{Enter},,                                                      ; get error code
-        if (!error)                                                                     ; if none, print and set cursor
-            SendInput, Callmet U_THIS.ASETERROR('', '', ){Left 8}
-        else{
-            StringUpper, error, error                                                   ; if error, set to upper case
-            moveback := 12 + StrLen(error)                                                     ; add 12 to it
-            SendInput, Callmet U_THIS.ASETERROR('', '', CST_A%error%){Left %moveback%}   ; print error and set cursor            
+    ::-ase::   ; auto-complete -aset
+        lineText := getText()   ; get line text
+        parts := parseStringToArray(lineText, ",")   ; parse each thing separated by commas
+
+        if (parts[1]){  ; if parts 1 is not empty, build string
+            instance = % parts[1] ; first thing should be instance
+            if (parts.MaxIndex() > 1){    ; get the number of parts passed in
+                if (parts[2] = "-"){
+                    field = ''
+                }else{
+                    field = % parts[2]
+                }
+                prompt = % parts[3]
+                if (parts[4] != "-"){
+                    promptValue = % "-" . parts[4]
+                }
+                severity = % parts[5]
+                lineText := instance . ".ASETERROR(" . field . ", " . prompt . promptValue . ", " . severity
+                if (parts[6]){
+                    assign = % parts[6]
+                    lineText := assign . "= fmet " . lineText
+                }else{
+                    lineText := "Callmet " . lineText
+                }
+                Send, %lineText%
+            }
+            
+        }else{
+            Send, Callmet this.ASETERROR('', '', )
         }
     Return
 
