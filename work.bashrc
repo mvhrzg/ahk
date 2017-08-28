@@ -1,5 +1,20 @@
 SSH_ENV=$HOME/.ssh/environment
 
+pullrepos() {
+  start_repos;
+  
+  shopt -s dotglob  # allows matches for directories beginning with .
+  for directory in ./*; do
+    if [[ -d ${directory}/.git ]]; then # if this directory is a git repo
+      echo "${directory}"
+      cd "${directory}"
+      gckm; # checkout master branch
+      gpl;  # pull
+      cd .. # go back to parent directory
+    fi
+  done
+}
+
 #starts git bash in $HOME/Documents/Repositories, where all git repos are stored
 function start_repos {
   cd $HOME/Documents/Repositories;
