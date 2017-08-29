@@ -1,0 +1,3 @@
+preferences > settings
+ignored packages["Vintage"]
+save
