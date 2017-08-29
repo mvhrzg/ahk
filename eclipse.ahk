@@ -97,7 +97,7 @@ SendMode, Input
         Loop, %length%{
             SendRaw, #
         }
-        Send, {Enter 3}
+        Send, {Enter 2}
     Return
 
 ; ----------------------------------------------------------------------------
@@ -118,7 +118,6 @@ SendMode, Input
         if (teardown = "t") {
             teardownText = GENERIC_%teardownText%
             secondUnderscore := InStr(teardownText, "_",, 1, 2)  ; find second underscore
-            ; MsgBox, % "2nd_ = " secondUnderscore
             teardownText := SubStr(teardownText, 1, secondUnderscore-1) 
             teardownText = %teardownText%_TEARDOWN
         }
