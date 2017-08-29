@@ -241,33 +241,37 @@ SendMode, Input
     ;; ASETERROR
     ::-ase::   ; auto-complete -aset
         lineText := getText()   ; get line text
-        parts := parseStringToArray(lineText, ",")   ; parse each thing separated by commas
+        parts := parseStringToArray(lineText, A_Space)   ; parse each thing separated by spaces
 
         if (parts[1]){  ; if parts 1 is not empty, build string
-            instance = % parts[1] ; first thing should be instance
+            if (StrLen(parts[1]) > 1){  ; could be u, or - (for U_THIS or this)
+                instance = % parts[1]
+            }else{
+                instance := parts[1] . "_THIS"
+            }
             if (parts.MaxIndex() > 1){    ; get the number of parts passed in
                 if (parts[2] = "-"){
                     field = ''
                 }else{
                     field = % parts[2]
                 }
-                prompt = % parts[3]
-                if (parts[4] != "-"){
-                    promptValue = % "-" . parts[4]
+                if (parts[3]){
+                    severity = % parts[3]
+                    moveback := StrLen(parts[3])
                 }
-                severity = % parts[5]
-                lineText := instance . ".ASETERROR(" . field . ", " . prompt . promptValue . ", " . severity
-                if (parts[6]){
-                    assign = % parts[6]
-                    lineText := assign . "= fmet " . lineText
+                lineText := instance . ".ASETERROR(" . field . ", '', " . severity
+                if (parts[4]){
+                    assign = % parts[4]
+                    lineText := assign . " = fmet " . lineText
                 }else{
                     lineText := "Callmet " . lineText
                 }
-                Send, % lineText
+                moveback := moveback + 3
+                Send, %lineText%{Left %moveback%}
             }
             
         }else{
-            Send, Callmet this.ASETERROR('', '', )
+            Send, Callmet this.ASETERROR('', '', CST_)
         }
     Return
 
