@@ -99,11 +99,34 @@ restoreClipboard(clearBeforeRestore){
     Clipboard := StoredClip
 }
 
-parseStringToArray(input, delimiter){
+parseStringToArray(input, delimiter, wrapper := 0){
     parsedArray := Object()
-    Loop, Parse, input, % delimiter
-    {
-        parsedArray[A_index] := A_LoopField
+    MsgBox, % "wrapper = " . wrapper
+    if (!wrapper){
+        MsgBox, no wrapper
+        Loop, Parse, input, % delimiter
+        {
+            parsedArray[A_index] := A_LoopField
+        }
+    }else{
+        MsgBox, yes wrapper
+        Loop, Parse, input, % delimiter
+        {
+            MsgBox, % "wrapper parse = " . A_LoopField
+            if (InStr(A_LoopField, wrapper))
+            {
+                MsgBox, found wrapper
+                Loop, Parse, A_LoopField, % wrapper
+                {
+                    tempLoopField = %tempLoopField% %A_LoopField%     ; keep adding to temp
+                    MsgBox, temp = %tempLoopField%
+                }
+                StringReplace, tempLoopField, tempLoopField, % wrapper,, All
+                parsedArray[A_index] := tempLoopField
+            }else{
+                parsedArray[A_index] := A_LoopField
+            }
+        }            
     }
     return parsedArray
 }
