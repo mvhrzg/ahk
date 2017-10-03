@@ -10,24 +10,28 @@ SendMode, Input
 #ifWinActive ahk_class SWT_Window0
     ;; MAKE
     ^m::    ; Ctrl + m
-        Send, Call MAKE('XX1B', '') From XX1S_QLF{Left 20}
+        Input, tableCode, T1L1, Enter
+        if(tableCode = 1){
+            tableCode = "XX1B"
+        }else{
+            tableCode = ""
+        }
+        Send, Call MAKE(%tableCode%, "") From XX1S_QLF{Left 20}
     Return
 
     ;; REMOVE
     ^r::    ; Ctrl + Alt + r
-        Send, Call REMOVE('XX1B', '') From XX1S_QLF{Left 20}
+        Send, Call REMOVE("XX1B", "") From XX1S_QLF{Left 20}
     Return
 
     ;; paste MAKEs as REMOVEs
     ^+r::   ; Ctrl + Shift + r
         StringCaseSense, On
         StringReplace, clipboard, clipboard, MAKE, REMOVE, All  ; replace MAKE with REMOVE
-        ; StringReplace, Clipboard, Clipboard, #, `n, All
         StringCaseSense, Off
 
         storeClipboard(false)
         StringReplace, Clipboard, Clipboard, `r`n`r`n, `n, All                ; remove LF
-        qlf = "QLF"
         StringReplace, Clipboard, Clipboard, XX1S_QLF, XX1S_QLF, UseErrorLevel
         counter = 0
 
@@ -39,7 +43,7 @@ SendMode, Input
             If (inString > 0)   ; if string is found
             {
                 findSecondPlus := -1    ; variable reset
-                ; find second occurrence of +, starting at where this line's PROJECT= was found + 2
+                ; find second occurrence of +, starting at where this line"s PROJECT= was found + 2
                 findSecondPlus := InStr(clipboard, "+",, inString, counter+2)
                 If (findSecondPlus > 0) ; if a second + is found
                 {
@@ -51,6 +55,17 @@ SendMode, Input
                     counter += 1
                 }
             }
+            ; else{
+            ;     Input, howManyAssignments, L1, Space
+            ;     inString := (Clipboard, "+",,1, (howManyAssignments*2))    ; look for position of whatever assignment we want *2, so we can trim back
+            ;     MsgBox, found secondPlus at %inString%
+            ;     beginningString := SubStr(clipboard, 1, (inString-2))   ; build the beginning of the string until the character before second +
+            ;     findEnd := InStr(clipboard, ") From XX1S_QLF", true, inString) ; find the end of the string -- returns position of )
+            ;     endingString := SubStr(clipboard, findEnd) ; extract the end of the make call
+            ;     clipboard = ; clear clipboard
+            ;     clipboard := beginningString . endingString
+            ;     counter += 1
+            ; }
         }
 
         ; paste the string
@@ -59,7 +74,59 @@ SendMode, Input
         restoreClipboard(true)
     Return
 
-    ::li::  ; auto-complete hotkey
+    ; local variable
+    ::lv::
+        scope   := "Local "
+        scopeId := "[L]"
+        lineText  := getText()
+        ; parts: [1]type (i, c, d, dt, dtm), [2]variable name, [3]value, [4]global modifier
+        parts := parseStringToArray(lineText, A_Space)
+        type  = % parts[1]
+        length = ;
+
+        if (type = "i"){
+            type := "Integer "
+            getLength := false
+        }else if (type = "c"){
+            type := "Char "
+            getLength := true
+        }else if(type = "d"){
+            type := "Decimal "
+            getLength := false
+        }else if (type = "dt"){
+            type := "Date "
+            getLength := false
+        }else if (type = "dtm"){
+            type := "Datetime "
+            getLength := false
+        }
+        name  = % parts[2]
+        value = % parts[3]
+        if (parts[4] = "g"){
+            scope   := "Global "
+            scopeId := "[V]"
+        }
+
+        if (parts[3]){  ; if there"s a value, send assignment
+            if (getLength){
+                length := "(" . StrLen(value)-2 . ")"
+                Send, % scope . type . name . length . " : " . scopeId . name . " = " . value
+            ; }
+            ; lParens := "("
+            ; foundLeftParens := InStr(name, lParens)
+            ; if (foundLeftParens){
+                ; StringTrimRight, name2, name, (StrLen(name)-(foundLeftParens-2))
+                ; Send, % scope . type . name . length . " : " . scopeId . name2 . " = " . value
+            }else{
+                Send, % scope . type . name . length . " : " . scopeId . name . " = " . value
+            }
+        }else{  ; send declaration
+            Send, % scope . type . name
+        }
+    return
+
+    ; log_instance
+    ::-log::  ; auto-complete hotkey
         instance := getText()
         if (instance){
             Send, Call LOG_INSTANCE(%instance%) From XX1S_QLF
@@ -80,7 +147,7 @@ SendMode, Input
 
     ;; add test stub
     ^t::    ; Ctrl + t
-        Send, Call TEST('') From XX1S_QLF{Left 16}
+        Send, Call TEST("") From XX1S_QLF{Left 16}
     Return
 
     ;; add group description
@@ -110,37 +177,37 @@ SendMode, Input
         storeClipboard(false)
         StringUpper, Clipboard, Clipboard
         Send, Subprog %clipboard%{Enter}{Tab}
-        Send, Call SETUP_ALL{Enter}
-        Send, Call CHECK_EQUAL(1,0, 'test not implemented') From XX1S_QLF{Enter}
+        Send, Call CHECK_EQUAL(1,0, "test not implemented") From XX1S_QLF{Enter}
 
-        teardownText = %clipboard%_TEARDOWN
+        ; teardownText = %clipboard%_TEARDOWN
 
         if (teardown = "t") {
-            teardownText = GENERIC_%teardownText%
-            secondUnderscore := InStr(teardownText, "_",, 1, 2)  ; find second underscore
-            teardownText := SubStr(teardownText, 1, secondUnderscore-1) 
-            teardownText = %teardownText%_TEARDOWN
+            teardownText = %clipboard%_TEARDOWN
+            ; teardownText = GENERIC_%teardownText%
+            ; secondUnderscore := InStr(teardownText, "_",, 1, 2)  ; find second underscore
+            ; teardownText := SubStr(teardownText, 1, secondUnderscore-1) 
+            ; teardownText = %teardownText%_TEARDOWN
+            Send, Call %teardownText%{Enter}{BackSpace 2}
         }
 
-        Send, Call %teardownText%{Enter}
         Send, {Home}End
 
-        ; if (teardown = "t") {
-        ;     Send, {Enter 2}Subprog %teardownText%{Enter 2}End
-        ;     Send, {NumpadUp 9}
-        ; } else{
-        Send, {NumpadUp 5}
-        ; }
+        if (teardown = "t") {
+            Send, {Enter 2}Subprog %teardownText%{Enter 2}End
+            Send, {NumpadUp 8}
+        } else{
+            Send, {NumpadUp 3}
+        }
 
         Gosub, ^.
+        Send, {Home}
 
-        ; if (teardown = "t"){
-        ;     Send, {NumpadDown 10}
-        ; }else{
-        Send, {NumpadDown 7}
-        ; }
-        Send, {Enter 3}
-        ; Send, {F7}
+        if (teardown = "t"){
+            Send, {NumpadDown 10}
+        }else{
+            Send, {NumpadDown 6}
+        }
+        Send, {F7}
         Send, {NumpadUp}
         restoreClipboard(true)
     Return
@@ -166,25 +233,27 @@ SendMode, Input
     ;; insert full timing log calls
     ^!t::  ; Ctrl + Alt + t
         Input, logNumber, T3, {Enter},,
-        Send, Call START_TIMING_LOG('', %logNumber%) From XX1S_DEBUG{Enter}
-        Send, Call ADD_UNTIMED_LOG_LINE('', %logNumber%) From XX1S_DEBUG{Enter}
+        Send, Call START_TIMING_LOG("", %logNumber%) From XX1S_DEBUG{Enter}
+        Send, Call ADD_UNTIMED_LOG_LINE("", %logNumber%) From XX1S_DEBUG{Enter}
         Send, Call CLOSE_TIMING_LOG(%logNumber%) From XX1S_DEBUG{Enter}{NumpadUp 3}{Home}{Right 23}
     Return
 
     ;; insert log_line call
     ^+t::   ; Ctrl + Shift + t
         Input, logNumber, T3, {Enter},,
-        Send, Call ADD_UNTIMED_LOG_LINE('', %logNumber%) From XX1S_DEBUG{Home}{Right 27}
+        Send, Call ADD_UNTIMED_LOG_LINE("", %logNumber%) From XX1S_DEBUG{Home}{Right 27}
     Return
 
     ;; insert local file call
     ^!l::   ; Ctrl + Alt + l
         Input, table,, {Enter},,    ; type 1 or 3 + table abbreviation (without activity code) + Enter
         StringLeft, flag, table, 1
-        if flag = 1
+        if(flag = 1){
             code = XX1B
-        else if flag = 3
+        }
+        else if (flag = 3){
             code = XX3F
+        }
         StringRight, table, table, StrLen(table) - 1
         Send, Local File %code%%table%{[}{]}{Left 1}
     Return
@@ -227,25 +296,30 @@ SendMode, Input
     !^d::   ; Alt + Ctrl + d + text to log + Enter
         Input, log,,{Enter},,
         if !log
-            Send, Call INLINE_LOG('') From XX1S_QLF{Left 16}
+            Send, Call INLINE_LOG("") From XX1S_QLF{Left 16}
         else
-            Send, Call INLINE_LOG('%log%') From XX1S_QLF{Left 15}{-}num$(){Left}
+            Send, Call INLINE_LOG("%log%") From XX1S_QLF{Left 15}{-}num$(){Left}
     Return
 
-    ;; print CHECK_EQUAL without comment
+    ;; print CHECK_EQUAL
     ^+z::   ; Ctrl + Shift + z
-        Send, Call CHECK_EQUAL(,, '') From XX1S_QLF{Left 20}
+        Send, Call CHECK_EQUAL(,, "") From XX1S_QLF{Left 20}
+    Return
+
+    ;; print CHECK_NOTEQUAL
+    ^+n::   ; Ctrl + Shift + n
+        Send, Call CHECK_NOTEQUAL(,, "") From XX1S_QLF{Left 20}
     Return
 
     ;; ASETERROR
     ::-ase::   ; auto-complete -aset
         lineText := getText()   ; get line text
-        ; parts: 1: instance, 2: field name, 3: severity, 4: text, 5: assignable integer
+        ; parts: [1]instance, [2]field name, [3]text, [4]severity, [5]assignable integer
         parts := parseStringToArray(lineText, A_Space, """")   ; parse each thing separated by spaces
 
         if (parts[1]){  ; if parts 1 is not empty, build string
-            if (StrLen(parts[1]) = "-"){  ; could be u, or - (for U_THIS or this)
-                instance = "this"
+            if (parts[1] = "-"){  ; could be u, or - (for U_THIS or this)
+                instance := "this"
             }else{
                 if (StrLen(parts[1]) > 1){
                     instance = % parts[1]
@@ -257,18 +331,18 @@ SendMode, Input
             }
             if (parts.MaxIndex() > 1){    ; get the number of parts passed in
                 if (parts[2] = "-"){
-                    field = ''
+                    field = ""
                 }else{
                     field = % parts[2]
+                    StringUpper, field, field
                 }
                 if (parts[3]){
-                    severity = % parts[3]
-                    moveback := StrLen(parts[3])
+                    prompt = % parts[3]
+                    StringReplace, prompt, prompt, `", `", All
                 }
                 if (parts[4]){
-                    prompt = % parts[4]
-                    StringReplace, prompt, prompt, `", `', All
-                    moveback := moveback + StrLen(parts[4])
+                    severity = % parts[4]
+                    moveback := StrLen(severity) + 2
                 }
                 lineText := instance . ".ASETERROR(" . field . ", " . prompt . ", " . severity
                 if (parts[5]){
@@ -277,12 +351,12 @@ SendMode, Input
                 }else{
                     lineText := "Callmet " . lineText
                 }
-                moveback := moveback + 3
+                ; moveback := moveback + 3
                 Send, %lineText%{Left %moveback%}
             }
             
         }else{
-            Send, Callmet this.ASETERROR('', '', CST_)
+            Send, Callmet this.ASETERROR("", "", CST_)
         }
     Return
 
@@ -292,7 +366,7 @@ SendMode, Input
     Return
 #ifWinActive
 
-; make it also work in 'Open Safe X3 source file' window
+; make it also work in "Open Safe X3 source file" window
 #ifWinActive ahk_class #32770
 ;; print QLF string and run it
     ^!q::

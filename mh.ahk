@@ -13,8 +13,8 @@ SendMode, Input
     }Else{
         storeClipboard(true)
         appendToClipboard()
-        clearClipboard()
-        array := parseStringToArray(StoredClip, "|")
+        ; clearClipboard()
+        ; array := parseStringToArray(StoredClip, "|")
     }
 Return
 
@@ -31,6 +31,14 @@ Return
     }
 return
 
+
+; ----------------------------------------------------------------------------
+; SSMS
+; #IfWinActive, ahk_class HwndWrapper[DefaultDomain;;9dcb1362-b06b-4061-9df6-20a9aa8e8f79]
+;     MsgBox, you are in SSMS
+;     Send, ^u ; Ctrl + u
+;     Send, x
+; #IfWinActive
 ; ----------------------------------------------------------------------------
 #IfWinNotActive, ahk_class mintty
 ;; print AutoHotKey

@@ -101,25 +101,28 @@ restoreClipboard(clearBeforeRestore){
 
 parseStringToArray(input, delimiter, wrapper := 0){
     parsedArray := Object()
-    MsgBox, % "wrapper = " . wrapper
+    StringReplace, input, input, +, {+}, All
+    StringReplace, input, input, (, {(}, All
+    StringReplace, input, input, ), {)}, All
+    ; MsgBox, % "wrapper = " . wrapper
     if (!wrapper){
-        MsgBox, no wrapper
+        ; MsgBox, no wrapper
         Loop, Parse, input, % delimiter
         {
             parsedArray[A_index] := A_LoopField
         }
     }else{
-        MsgBox, yes wrapper
+        ; MsgBox, yes wrapper
         Loop, Parse, input, % delimiter
         {
-            MsgBox, % "wrapper parse = " . A_LoopField
+            ; MsgBox, % "wrapper parse = " . A_LoopField
             if (InStr(A_LoopField, wrapper))
             {
                 MsgBox, found wrapper
                 Loop, Parse, A_LoopField, % wrapper
                 {
                     tempLoopField = %tempLoopField% %A_LoopField%     ; keep adding to temp
-                    MsgBox, temp = %tempLoopField%
+                    ; MsgBox, temp = %tempLoopField%
                 }
                 StringReplace, tempLoopField, tempLoopField, % wrapper,, All
                 parsedArray[A_index] := tempLoopField
@@ -128,5 +131,6 @@ parseStringToArray(input, delimiter, wrapper := 0){
             }
         }            
     }
+
     return parsedArray
 }
