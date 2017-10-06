@@ -82,8 +82,7 @@ Return
 ^!q::   ; Ctrl + Alt + q
     Input, contents,,{Enter},,                          ; start with 1, 2, 3; enter abbreviation; press Enter
     q_array := _qlf(contents)
-    if q_array [1] != ""
-    {
+    if (q_array [1] != ""){
         code := q_array[1]
         abbrev := q_array[2]
         Send, %code%%abbrev%

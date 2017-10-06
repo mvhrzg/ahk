@@ -39,7 +39,7 @@ SendMode, Input
         {
             inString := -1   ; variable reset
             ; TODO: incorporate the string "SITE=" for PJ make/remove
-            inString := InStr(clipboard, "PROJECT=")    ; look for PROJECT=
+            inString := InStr(clipboard, "PROJECT=", false)    ; look for PROJECT=
             If (inString > 0)   ; if string is found
             {
                 findSecondPlus := -1    ; variable reset
@@ -47,7 +47,7 @@ SendMode, Input
                 findSecondPlus := InStr(clipboard, "+",, inString, counter+2)
                 If (findSecondPlus > 0) ; if a second + is found
                 {
-                    beginningString := SubStr(clipboard, 1, (findSecondPlus-1))   ; build the beginning of the string until the character before second +
+                    beginningString := SubStr(clipboard, 1, (findSecondPlus-2))   ; build the beginning of the string until the character before second +
                     findEnd := InStr(clipboard, ") From XX1S_QLF", true, findSecondPlus) ; find the end of the string -- returns position of )
                     endingString := SubStr(clipboard, findEnd) ; extract the end of the make call
                     clipboard = ; clear clipboard
@@ -177,6 +177,10 @@ SendMode, Input
         storeClipboard(false)
         StringUpper, Clipboard, Clipboard
         Send, Subprog %clipboard%{Enter}{Tab}
+        Send, {#} setup{Enter}
+        Send, {#} pre-condition{Enter}
+        Send, {#} action{Enter}
+        Send, {#} assertion{Enter}
         Send, Call CHECK_EQUAL(1,0, "test not implemented") From XX1S_QLF{Enter}
 
         ; teardownText = %clipboard%_TEARDOWN
@@ -187,25 +191,28 @@ SendMode, Input
             ; secondUnderscore := InStr(teardownText, "_",, 1, 2)  ; find second underscore
             ; teardownText := SubStr(teardownText, 1, secondUnderscore-1) 
             ; teardownText = %teardownText%_TEARDOWN
+            Send, {#} cleanup{Enter}
             Send, Call %teardownText%{Enter}{BackSpace 2}
+        }else{
+            Send, {#} no cleanup{Enter}
         }
 
         Send, {Home}End
 
         if (teardown = "t") {
             Send, {Enter 2}Subprog %teardownText%{Enter 2}End
-            Send, {NumpadUp 8}
+            Send, {NumpadUp 13}
         } else{
-            Send, {NumpadUp 3}
+            Send, {NumpadUp 8}
         }
 
         Gosub, ^.
         Send, {Home}
 
         if (teardown = "t"){
-            Send, {NumpadDown 10}
+            Send, {NumpadDown 15}
         }else{
-            Send, {NumpadDown 6}
+            Send, {NumpadDown 11}
         }
         Send, {F7}
         Send, {NumpadUp}
