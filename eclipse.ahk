@@ -9,7 +9,7 @@ SendMode, Input
 ; ----------------------------------------------------------------------------
 #ifWinActive ahk_class SWT_Window0
     ;; CREATE
-    ::c::    ; auto-complete -c
+    ::-c::    ; auto-complete -c
         lineText := getText()
         if(lineText){
             tableCode := % lineText
@@ -20,7 +20,7 @@ SendMode, Input
     Return
 
     ;; EMBALM
-    ^+e::   ; Ctrl + Shift + e
+    ::-e::   ; auto-complete -e
         Send, Call EMBALM("", "") From XX1S_QLF{Left 20}
     Return
 
@@ -75,7 +75,7 @@ SendMode, Input
     ; Return
 
     ; variable declarations
-    ::v::   ; auto-complete -v
+    ::-v::   ; auto-complete -v
         lineText  := getText()
         ; parts: [1] scope (l or g), [2]type (i, c, d, dt, dtm, f (file)), [3]variable/file name, [4]value/file abbreviation #, [4]global modifier
         parts := parseStringToArray(lineText, A_Space)
