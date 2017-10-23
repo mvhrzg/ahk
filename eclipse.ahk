@@ -8,127 +8,137 @@ SendMode, Input
 */
 ; ----------------------------------------------------------------------------
 #ifWinActive ahk_class SWT_Window0
-    ;; MAKE
-    ^m::    ; Ctrl + m
-        Input, tableCode, T1L1, Enter
-        if(tableCode = 1){
-            tableCode = "XX1B"
+    ;; CREATE
+    ::c::    ; auto-complete -c
+        lineText := getText()
+        if(lineText){
+            tableCode := % lineText
         }else{
-            tableCode = ""
+            tableCode := ""
         }
-        Send, Call MAKE(%tableCode%, "") From XX1S_QLF{Left 20}
+        Send, Call CREATE(%tableCode%, "",) From XX1S_QLF{Left 17}
     Return
 
-    ;; REMOVE
-    ^r::    ; Ctrl + Alt + r
-        Send, Call REMOVE("XX1B", "") From XX1S_QLF{Left 20}
+    ;; EMBALM
+    ^+e::   ; Ctrl + Shift + e
+        Send, Call EMBALM("", "") From XX1S_QLF{Left 20}
     Return
 
-    ;; paste MAKEs as REMOVEs
-    ^+r::   ; Ctrl + Shift + r
-        StringCaseSense, On
-        StringReplace, clipboard, clipboard, MAKE, REMOVE, All  ; replace MAKE with REMOVE
-        StringCaseSense, Off
+    ;; paste MAKEs as REMOVEs @DEPRECATED
+    ; ^+r::   ; Ctrl + Shift + r
+    ;     StringCaseSense, On
+    ;     StringReplace, clipboard, clipboard, MAKE, REMOVE, All  ; replace MAKE with REMOVE
+    ;     StringCaseSense, Off
 
-        storeClipboard(false)
-        StringReplace, Clipboard, Clipboard, `r`n`r`n, `n, All                ; remove LF
-        StringReplace, Clipboard, Clipboard, XX1S_QLF, XX1S_QLF, UseErrorLevel
-        counter = 0
+    ;     storeClipboard(false)
+    ;     StringReplace, Clipboard, Clipboard, `r`n`r`n, `n, All                ; remove LF
+    ;     StringReplace, Clipboard, Clipboard, XX1S_QLF, XX1S_QLF, UseErrorLevel
+    ;     counter = 0
 
-        Loop, Parse, Clipboard, `n
-        {
-            inString := -1   ; variable reset
-            ; TODO: incorporate the string "SITE=" for PJ make/remove
-            inString := InStr(clipboard, "PROJECT=", false)    ; look for PROJECT=
-            If (inString > 0)   ; if string is found
-            {
-                findSecondPlus := -1    ; variable reset
-                ; find second occurrence of +, starting at where this line"s PROJECT= was found + 2
-                findSecondPlus := InStr(clipboard, "+",, inString, counter+2)
-                If (findSecondPlus > 0) ; if a second + is found
-                {
-                    beginningString := SubStr(clipboard, 1, (findSecondPlus-2))   ; build the beginning of the string until the character before second +
-                    findEnd := InStr(clipboard, ") From XX1S_QLF", true, findSecondPlus) ; find the end of the string -- returns position of )
-                    endingString := SubStr(clipboard, findEnd) ; extract the end of the make call
-                    clipboard = ; clear clipboard
-                    clipboard := beginningString . endingString
-                    counter += 1
-                }
-            }
-            ; else{
-            ;     Input, howManyAssignments, L1, Space
-            ;     inString := (Clipboard, "+",,1, (howManyAssignments*2))    ; look for position of whatever assignment we want *2, so we can trim back
-            ;     MsgBox, found secondPlus at %inString%
-            ;     beginningString := SubStr(clipboard, 1, (inString-2))   ; build the beginning of the string until the character before second +
-            ;     findEnd := InStr(clipboard, ") From XX1S_QLF", true, inString) ; find the end of the string -- returns position of )
-            ;     endingString := SubStr(clipboard, findEnd) ; extract the end of the make call
-            ;     clipboard = ; clear clipboard
-            ;     clipboard := beginningString . endingString
-            ;     counter += 1
-            ; }
-        }
+    ;     Loop, Parse, Clipboard, `n
+    ;     {
+    ;         inString := -1   ; variable reset
+    ;         ; TODO: incorporate the string "SITE=" for PJ make/remove
+    ;         inString := InStr(clipboard, "PROJECT=", false)    ; look for PROJECT=
+    ;         if(inString > 0)   ; if string is found
+    ;         {
+    ;             findSecondPlus := -1    ; variable reset
+    ;             ; find second occurrence of +, starting at where this line"s PROJECT= was found + 2
+    ;             findSecondPlus := InStr(clipboard, "+",, inString, counter+2)
+    ;             if(findSecondPlus > 0) ; if a second + is found
+    ;             {
+    ;                 beginningString := SubStr(clipboard, 1, (findSecondPlus-2))   ; build the beginning of the string until the character before second +
+    ;                 findEnd := InStr(clipboard, ") From XX1S_QLF", true, findSecondPlus) ; find the end of the string -- returns position of )
+    ;                 endingString := SubStr(clipboard, findEnd) ; extract the end of the make call
+    ;                 clipboard = ; clear clipboard
+    ;                 clipboard := beginningString . endingString
+    ;                 counter += 1
+    ;             }
+    ;         }
+    ;         ; else{
+    ;         ;     Input, howManyAssignments, L1, Space
+    ;         ;     inString := (Clipboard, "+",,1, (howManyAssignments*2))    ; look for position of whatever assignment we want *2, so we can trim back
+    ;         ;     MsgBox, found secondPlus at %inString%
+    ;         ;     beginningString := SubStr(clipboard, 1, (inString-2))   ; build the beginning of the string until the character before second +
+    ;         ;     findEnd := InStr(clipboard, ") From XX1S_QLF", true, inString) ; find the end of the string -- returns position of )
+    ;         ;     endingString := SubStr(clipboard, findEnd) ; extract the end of the make call
+    ;         ;     clipboard = ; clear clipboard
+    ;         ;     clipboard := beginningString . endingString
+    ;         ;     counter += 1
+    ;         ; }
+    ;     }
 
-        ; paste the string
-        Send, ^v
-        Sleep, 10
-        restoreClipboard(true)
-    Return
+    ;     ; paste the string
+    ;     Send, ^v
+    ;     Sleep, 10
+    ;     restoreClipboard(true)
+    ; Return
 
-    ; local variable
-    ::lv::
-        scope   := "Local "
-        scopeId := "[L]"
+    ; variable declarations
+    ::v::   ; auto-complete -v
         lineText  := getText()
-        ; parts: [1]type (i, c, d, dt, dtm), [2]variable name, [3]value, [4]global modifier
+        ; parts: [1] scope (l or g), [2]type (i, c, d, dt, dtm, f (file)), [3]variable/file name, [4]value/file abbreviation #, [4]global modifier
         parts := parseStringToArray(lineText, A_Space)
-        type  = % parts[1]
+        scope   := "Local "
+        scopeId = % parts [1]
+        type = ;
+        typeId  = % parts[2]
         length = ;
 
-        if (type = "i"){
-            type := "Integer "
-            getLength := false
-        }else if (type = "c"){
-            type := "Char "
-            getLength := true
-        }else if(type = "d"){
-            type := "Decimal "
-            getLength := false
-        }else if (type = "dt"){
-            type := "Date "
-            getLength := false
-        }else if (type = "dtm"){
-            type := "Datetime "
-            getLength := false
-        }
-        name  = % parts[2]
-        value = % parts[3]
-        if (parts[4] = "g"){
-            scope   := "Global "
+        if(scopeId = "l"){
+            scopeId := "[L]"
+        }else if(scopeId = "g"){
             scopeId := "[V]"
+            scope   := "Global "
         }
 
-        if (parts[3]){  ; if there"s a value, send assignment
-            if (getLength){
+        if(typeId = "i"){
+            type := "Integer "
+            getLength := false
+        }else if(typeId = "c"){
+            type := "Char "
+            getLength := true
+        }else if(typeId = "d"){
+            type := "Decimal "
+            getLength := false
+        }else if(typeId = "dt"){
+            type := "Date "
+            getLength := false
+        }else if(typeId = "dtm"){
+            type := "Datetime "
+            getLength := false
+        }else if(typeId = "f"){
+            type := "File "
+            getLenth := false
+        }
+        name  = % parts[3]
+        value = % parts[4]
+        ; TODO: ADD WHERE CLAUSE
+        if(typeId = "f"){ ; if this is a file declaration, name will be an integer followed by the table characters (e.g.: 1WBS)
+            StringReplace, name, name, 1, XX1B, All ; replace starting 1 with XX1B
+            StringReplace, name, name, 2, XX1S, All ; replace starting 2 with XX1S
+            StringReplace, name, name, 3, XX3F, All ; replace starting 3 with XX3F
+            if(parts[4]){  ; if the table abbreviation is different than the completing filename characters, append abbreviation to name
+                name := name . "[" . value . "]"     ; append parts[4] (table abbreviation)
+            }
+        }else if(parts[4]){  ; value assignment
+            ; if this not a file declaration, check if there's an assignment
+            if(getLength){ ; if this is a char with a value
                 length := "(" . StrLen(value)-2 . ")"
                 Send, % scope . type . name . length . " : " . scopeId . name . " = " . value
-            ; }
-            ; lParens := "("
-            ; foundLeftParens := InStr(name, lParens)
-            ; if (foundLeftParens){
-                ; StringTrimRight, name2, name, (StrLen(name)-(foundLeftParens-2))
-                ; Send, % scope . type . name . length . " : " . scopeId . name2 . " = " . value
-            }else{
+                return
+            }else{  ; if this is not a file or a char, but there's a value
                 Send, % scope . type . name . length . " : " . scopeId . name . " = " . value
+                return
             }
-        }else{  ; send declaration
-            Send, % scope . type . name
         }
+        Send, % scope . type . name     ; send table declaration
     return
 
     ; log_instance
     ::-log::  ; auto-complete hotkey
         instance := getText()
-        if (instance){
+        if(instance){
             Send, Call LOG_INSTANCE(%instance%) From XX1S_QLF
         }else{
             Send, Call LOG_INSTANCE() From XX1S_QLF{Left 15}
@@ -173,60 +183,29 @@ SendMode, Input
 
     ;; paste whole test + teardown block
     ^+b::   ; Ctrl + Shift + b
-        Input, teardown, T1, {Enter},,
         storeClipboard(false)
         StringUpper, Clipboard, Clipboard
-        Send, Subprog %clipboard%{Enter}{Tab}
+        Send, Subprog %clipboard%{Enter}{Tab} : Call CLEANUP from XX1S_QLF2
         Send, {#} setup{Enter}
         Send, {#} pre-condition{Enter}
         Send, {#} action{Enter}
         Send, {#} assertion{Enter}
         Send, Call CHECK_EQUAL(1,0, "test not implemented") From XX1S_QLF{Enter}
-
-        ; teardownText = %clipboard%_TEARDOWN
-
-        if (teardown = "t") {
-            teardownText = %clipboard%_TEARDOWN
-            ; teardownText = GENERIC_%teardownText%
-            ; secondUnderscore := InStr(teardownText, "_",, 1, 2)  ; find second underscore
-            ; teardownText := SubStr(teardownText, 1, secondUnderscore-1) 
-            ; teardownText = %teardownText%_TEARDOWN
-            Send, {#} cleanup{Enter}
-            Send, Call %teardownText%{Enter}{BackSpace 2}
-        }else{
-            Send, {#} no cleanup{Enter}
-        }
+        Send, {#} cleanup{Enter}
 
         Send, {Home}End
-
-        if (teardown = "t") {
-            Send, {Enter 2}Subprog %teardownText%{Enter 2}End
-            Send, {NumpadUp 13}
-        } else{
-            Send, {NumpadUp 8}
-        }
+        Send, {Enter 2}
+        Send, {NumpadUp 11}
 
         Gosub, ^.
-        Send, {Home}
 
-        if (teardown = "t"){
-            Send, {NumpadDown 15}
-        }else{
-            Send, {NumpadDown 11}
-        }
         Send, {F7}
-        Send, {NumpadUp}
         restoreClipboard(true)
     Return
 
-    ;; surround clipboard contents with Call and _TEARDOWN
-    ^b::    ;Ctrl + b
-        Input, teardown, T1, {Enter},,
-        if (teardown = "t") {
-            Send, Call{Space}^v_TEARDOWN
-        } else {
-            Send, Call ^v
-        }
+    ;; prepend clipboard contents with "Call"
+    ^+c::    ;Ctrl + Shift + c
+        Send, Call{Space}^v
     Return
 
     ;; paste freegroup and kill
@@ -234,7 +213,6 @@ SendMode, Input
         Input, code,, {Enter},,
         StringUpper, code, code
         _freeGroup(code)
-        ; Send, FreeGroup %code% : Kill %code%
     Return
 
     ;; insert full timing log calls
@@ -258,7 +236,7 @@ SendMode, Input
         if(flag = 1){
             code = XX1B
         }
-        else if (flag = 3){
+        else if(flag = 3){
             code = XX3F
         }
         StringRight, table, table, StrLen(table) - 1
@@ -281,7 +259,7 @@ SendMode, Input
     ^!i::
         Input, contents,,{Enter},,
         r_array := _instance(contents)
-        if (r_array [1] != "")  ; if we returned the code
+        if(r_array [1] != "")  ; if we returned the code
         {
             code := r_array[1]
             abbrev := r_array[2]
@@ -324,35 +302,35 @@ SendMode, Input
         ; parts: [1]instance, [2]field name, [3]text, [4]severity, [5]assignable integer
         parts := parseStringToArray(lineText, A_Space, """")   ; parse each thing separated by spaces
 
-        if (parts[1]){  ; if parts 1 is not empty, build string
-            if (parts[1] = "-"){  ; could be u, or - (for U_THIS or this)
+        if(parts[1]){  ; if parts 1 is not empty, build string
+            if(parts[1] = "-"){  ; could be u, or - (for U_THIS or this)
                 instance := "this"
             }else{
-                if (StrLen(parts[1]) > 1){
+                if(StrLen(parts[1]) > 1){
                     instance = % parts[1]
-                }else{
+                }else if(parts[1] = "U"){
                     instance := parts[1] . "_THIS"
                 }
 
                 StringUpper, instance, instance
             }
-            if (parts.MaxIndex() > 1){    ; get the number of parts passed in
-                if (parts[2] = "-"){
+            if(parts.MaxIndex() > 1){    ; get the number of parts passed in
+                if(parts[2] = "-"){
                     field = ""
                 }else{
                     field = % parts[2]
                     StringUpper, field, field
                 }
-                if (parts[3]){
+                if(parts[3]){
                     prompt = % parts[3]
                     StringReplace, prompt, prompt, `", `", All
                 }
-                if (parts[4]){
+                if(parts[4]){
                     severity = % parts[4]
                     moveback := StrLen(severity) + 2
                 }
                 lineText := instance . ".ASETERROR(" . field . ", " . prompt . ", " . severity
-                if (parts[5]){
+                if(parts[5]){
                     assign = % parts[5]
                     lineText := assign . " = fmet " . lineText
                 }else{
@@ -369,7 +347,7 @@ SendMode, Input
 
     ;; restart eclipse
     ^!+r::
-        Send, !f{Down 27}{Enter}    ; Alt + f + Down (27 times) + Enter : 27 for Oxygen; 18 for Neon
+        Send, !f{Up 2}{Enter}    ; Alt + f + Up (2 times) + Enter
     Return
 #ifWinActive
 

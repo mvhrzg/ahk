@@ -31,6 +31,19 @@ Return
     }
 return
 
+;; switch to open eclipse tab if eclipse is open. otherwise, open eclipse
+#5:: ; Win + 5
+    Process, Exist, eclipse.exe ; check if eclipse is running
+    If (errorLevel) ; if process exists, switch to window
+        WinActivate, workspace
+    Else ; if process doesn't exist, errorLevel = 0
+        run, "C:\Program Files (x86)\eclipse\eclipse.exe"
+Return
+
+#Q::    ; Win + Q to switch to eclipse
+    Goto, #5
+Return
+
 ; ----------------------------------------------------------------------------
 #IfWinNotActive, ahk_class mintty
 ;; print AutoHotKey
@@ -63,10 +76,10 @@ return
 
 ;; makes all selected text upper case
 ^!u::    ; Ctrl + Alt + u
-    Send, ^c   ; Ctrl + c
+    Send, {CtrlDown}c{CtrlUp}   ; Ctrl + c
     ClipWait, 1, 1
     StringUpper, Clipboard, Clipboard
-    Send, ^v   ; Ctrl + v
+    Send, {CtrlDown}v{CtrlUp}   ; Ctrl + v
 Return
 ; ----------------------------------------------------------------------------
 

@@ -23,6 +23,7 @@ getText(){
     return textToGet
 }
 
+;; loop through all open windows and print their info
 ^+!l::	;Ctrl + Shift + Alt + l
     WinGet, id, list,,, Program Manager
     Loop, %id%
@@ -31,7 +32,8 @@ getText(){
         WinActivate, ahk_id %this_id%
         WinGetClass, this_class, ahk_id %this_id%
         WinGetTitle, this_title, ahk_id %this_id%
-        MsgBox, 4, , Visiting All Windows`n%a_index% of %id%`nID: %this_id%`nCLASS: %this_class%`nTITLE: %this_title%`n`nContinue?
+        WinGetText, this_text, ahk_id %this_id%
+        MsgBox, 4, ,Window %a_index% of %id%`nID: %this_id%`nCLASS: %this_class%`nTITLE: %this_title%`nTEXT: %this_text%`n`nContinue (Ctrl + C to copy all text)?
         ifMsgBox, NO, break
     }
 Return
