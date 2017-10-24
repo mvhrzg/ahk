@@ -4,6 +4,14 @@
 SendMode, Input
 #SingleInstance, force
 
+^!1:: Send, XX1B ; print XX1B - Ctrl + Alt + 1
+^!2:: Send, XX1S_ ; print XX1S_ - Ctrl + Alt + 2
+^!3:: Send, XX3F ; print XX3F - Ctrl + Alt + 3
+^!c:: Send, CRETE- ; Ctrl + Alt + c - print CRETE-
+; ----------------------------------------------------------------------------
+!f1:: WinMaximize A ; Alt + F1 - maximize current window
+!f2:: WinMinimize A ; Alt + F2 - minimize current window
+
 ; append lines to clipboard
 ^+c:: ; Ctrl + Shift + c
     Input, shouldClear, L1T0.5,,
@@ -23,14 +31,44 @@ Return
     clearClipboard()    ; clear it
 Return
 
-^!p::
-    tests := parseStringToArray(Clipboard, "QLF`n")
-    Loop, Parse, tests, QLF`n
-    {
-        MsgBox, % "test" . A_index . " = " . A_LoopField
-    }
-return
+; ----------------------------------------------------------------------------
+/*
+* Taskbar hotkeys
+*/
+; ----------------------------------------------------------------------------
+;; switch to open hipchat tab if open. otherwise, open hipchat
+#h:: ; Win + h
+    SetTitleMatchMode, 2    ; open a window if its class contains Sublime Text
+    Process, Exist, HipChat.exe ; check if sublime is running
+    If (errorLevel) ; if process exists, switch to window
+        WinActivate, HipChat
+    Else ; if process doesn't exist, errorLevel = 0
+        run, "C:\Program Files (x86)\Atlassian\HipChat4\HipChat.exe"
+Return
 
+;; switch to open sublime tab if open. otherwise, open sublime
+#s:: ; Win + s
+    SetTitleMatchMode, 2    ; open a window if its class contains Sublime Text
+    Process, Exist, sublime_text.exe ; check if sublime is running
+    If (errorLevel) ; if process exists, switch to window
+        WinActivate, Sublime Text
+    Else ; if process doesn't exist, errorLevel = 0
+        run, "C:\Program Files\Sublime Text 3\sublime_text.exe"
+Return
+
+;; switch to open firefox tab if open. otherwise, open firefox
+#`:: ; Win + `
+    SetTitleMatchMode, 2    ; open a window if its class contains Mozilla Firefox
+    Process, Exist, firefox.exe ; check if sublime is running
+    If (errorLevel) ; if process exists, switch to window
+        WinActivate, Mozilla Firefox
+    Else ; if process doesn't exist, errorLevel = 0
+        run, "C:\Program Files (x86)\Mozilla Firefox\firefox.exe"
+Return
+
+#q::    ; Win + q to switch to eclipse
+    Goto, #5
+Return
 ;; switch to open eclipse tab if eclipse is open. otherwise, open eclipse
 #5:: ; Win + 5
     Process, Exist, eclipse.exe ; check if eclipse is running
@@ -39,11 +77,14 @@ return
     Else ; if process doesn't exist, errorLevel = 0
         run, "C:\Program Files (x86)\eclipse\eclipse.exe"
 Return
+; [end Taskbar]
+; ----------------------------------------------------------------------------
 
-#Q::    ; Win + Q to switch to eclipse
-    Goto, #5
-Return
 
+; ----------------------------------------------------------------------------
+/*
+* MINGW64 terminal
+*/
 ; ----------------------------------------------------------------------------
 #IfWinNotActive, ahk_class mintty
 ;; print AutoHotKey
@@ -55,25 +96,22 @@ Return
     Send, {!}g{Space}AutoHotKey{Space}
 Return
 #IfWinNotActive
-; ----------------------------------------------------------------------------
-^!1:: Send, XX1B ; print XX1B - Ctrl + Alt + 1
-^!2:: Send, XX1S_ ; print XX1S_ - Ctrl + Alt + 2
-^!3:: Send, XX3F ; print XX3F - Ctrl + Alt + 3
-^!c:: Send, CRETE- ; Ctrl + Alt + c - print CRETE-
-; ----------------------------------------------------------------------------
-!f1:: WinMaximize A ; Alt + F1 - maximize current window
-!f2:: WinMinimize A ; Alt + F2 - minimize current window
-; ----------------------------------------------------------------------------
 
 ^+v::   ; Ctrl + Shift + v - paste and replace clipboard contents with currently selected text
     storeClipboard(true)
-    Send, ^x
+    cut()
     ClipWait, 1.5, 1
     Send, %StoredClip%
 return
-
+; [end MING64]
 ; ----------------------------------------------------------------------------
 
+
+; ----------------------------------------------------------------------------
+/*
+* Text hotkeys
+*/
+; ----------------------------------------------------------------------------
 ;; makes all selected text upper case
 ^!u::    ; Ctrl + Alt + u
     Send, {CtrlDown}c{CtrlUp}   ; Ctrl + c
@@ -81,18 +119,28 @@ return
     StringUpper, Clipboard, Clipboard
     Send, {CtrlDown}v{CtrlUp}   ; Ctrl + v
 Return
-; ----------------------------------------------------------------------------
 
-;; print QLF outside of eclipse
-^!q::   ; Ctrl + Alt + q
-    Input, contents,,{Enter},,                          ; start with 1, 2, 3; enter abbreviation; press Enter
-    q_array := _qlf(contents)
-    if (q_array [1] != ""){
-        code := q_array[1]
-        abbrev := q_array[2]
-        Send, %code%%abbrev%
+; inverts case of selected text
+!x::    ; Alt + x
+    invertedClip = ;
+    StringCaseSense, On
+    cut()
+    Loop % StrLen(Clipboard) {
+        character := SubStr(Clipboard, A_Index, 1)  ; look at each character separately
+        ; MsgBox, character is %character%
+        if (isUpper(character)) {
+            StringLower, character, character 
+            ; Send, % character
+        } else{
+            StringUpper, character, character
+            ; Send, % character
+        }
+        invertedClip .= character
     }
-Return
+    Clipboard := invertedClip
+    paste()
+return
+; [end Text]
 ; ----------------------------------------------------------------------------
 
 /*
@@ -111,14 +159,3 @@ Return
 #ifWinActive
 ; [end Firefox]
 ; ----------------------------------------------------------------------------
-
-#ifWinActive ahk_class PX_WINDOW_CLASS
-^!b::
-    Reload
-    Sleep 1000 ; If successful, the reload will close this instance during the Sleep, so the line below will never be reached.
-    MsgBox, 4,, The script could not be reloaded. Would you like to open it for editing?
-    IfMsgBox, Yes, Edit
-return
-#ifWinActive ahk_class PX_WINDOW_CLASS
-
-; ----------------------------------------------------------------------------	

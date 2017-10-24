@@ -27,6 +27,7 @@ _instance(contents){
 
     Return array
 }
+
 ;; qlf text helper
 _qlf(contents){
     StringLeft, flag, contents, 1                       	; get the activity code flag

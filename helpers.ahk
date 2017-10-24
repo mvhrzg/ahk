@@ -4,18 +4,28 @@ SendMode, Input
 #SingleInstance, force
 
 /*
-* Debugging and helpers
+* Debugging and helpers: used for debugging/creating window specific hotkeys
 */
 ; ----------------------------------------------------------------------------
-;; Used for debugging/creating window specific hotkeys
-;; displays all active windows (with ID, class and title) in a popup
+
+copy(){
+    Send, ^c
+}
+
+paste(){
+    Send, ^v
+}
+
+cut(){
+    Send, ^x
+}
 
 getText(){
     storeClipboard(true)
     Sleep, 250
     textToGet =
     Send, {ShiftDown}{Home}{ShiftUp}
-    SendInput , ^x
+    cut()
     ClipWait 1, 1
     textToGet = %Clipboard%
     restoreClipboard(true)
@@ -23,6 +33,7 @@ getText(){
     return textToGet
 }
 
+;; displays all active windows (with ID, class and title) in a popup
 ;; loop through all open windows and print their info
 ^+!l::	;Ctrl + Shift + Alt + l
     WinGet, id, list,,, Program Manager
@@ -38,7 +49,7 @@ getText(){
     }
 Return
 
-;; inserts section separator if in sublime, in mh.ahk
+;; inserts section separator if in sublime
 #ifWinActive ahk_class PX_WINDOW_CLASS
 ^1::	;Ctrl + 1
 	SetTitleMatchMode, 3
@@ -59,7 +70,7 @@ Return
 ;; count selected characters
 ^#c::   ; Ctrl + Win + c
     storeClipboard(true)
-    Send, ^c   ; copy selected content
+    copy()   ; copy selected content
     ClipWait, 1, "text"
     length := StrLen(Clipboard)
     MsgBox, 0, Character length, %length% characters selected, 5
@@ -69,7 +80,7 @@ Return
 appendToClipboard(){
     clipBreak = |
 
-    Send, ^c
+    copy()
     ClipWait, 0.5, 1
     if (!StoredClip){   ; 1. StoredClip is empty
         storeClipboard(false)
@@ -120,7 +131,7 @@ parseStringToArray(input, delimiter, wrapper := 0){
             ; MsgBox, % "wrapper parse = " . A_LoopField
             if (InStr(A_LoopField, wrapper))
             {
-                MsgBox, found wrapper
+                ; MsgBox, found wrapper
                 Loop, Parse, A_LoopField, % wrapper
                 {
                     tempLoopField = %tempLoopField% %A_LoopField%     ; keep adding to temp
@@ -135,4 +146,14 @@ parseStringToArray(input, delimiter, wrapper := 0){
     }
 
     return parsedArray
+}
+
+; returns true if a character is upper cased
+isUpper(c) {
+  return (C >= "A") and (C <= "Z")
+}
+
+; returns true if a character is lower cased
+isLower(c) {
+  return (C >= "a") and (C <= "z")
 }
