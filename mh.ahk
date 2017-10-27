@@ -15,9 +15,8 @@ SendMode, Input
 ; append lines to clipboard
 ^+c:: ; Ctrl + Shift + c
     storeClipboard(true)
-    appendToClipboard()
-    clearClipboard()
-    ; array := parseStringToArray(StoredClip, "|")
+    copy()
+    appendToClipboard(Clipboard)
 Return
 
 ;; clears clipboard
@@ -66,7 +65,7 @@ Return
 #5:: ; Win + 5
     Process, Exist, eclipse.exe ; check if eclipse is running
     If (errorLevel) ; if process exists, switch to window
-        WinActivate, workspace ; or ahk_class SWT_Window0
+        WinActivate, ahk_class SWT_Window0
     Else ; if process doesn't exist, errorLevel = 0
         run, "C:\Program Files (x86)\eclipse\eclipse.exe"
 Return

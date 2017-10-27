@@ -165,37 +165,62 @@ Return
     Send, {NumpadUp}{Enter}                 ; hit up + enter to run previous
 Return
 
-;; build single test block
+;; build single or multiple test block(s)
 ^b::   ; Ctrl + b
-    doneWithBuild := false
     storeClipboard(false)
-    StringUpper, Clipboard, Clipboard
-    Send, Subprog %clipboard% : Call CLEANUP from XX1S_QLF
-    Send, {Enter Down}{Enter Up}{Tab Down}{Tab Up}
-    Send, {#} setup{Enter Down}{Enter Up}
-    Send, {#} pre-condition{Enter Down}{Enter Up}
-    Send, {#} action{Enter Down}{Enter Up}
-    Send, {#} assertion{Enter Down}{Enter Up}
-    Send, Call CHECK_EQUAL(1,0, "test not implemented") From XX1S_QLF{Enter Down}{Enter Up}
-    Send, {#} cleanup{Enter Down}{Enter Up}
-
-    Send, {Home}End
-    Send, {NumpadUp 8}
-
-    Gosub, ^.
-
-    Send, {F7 Down}{F7 Up}
-    doneWithBuild := true
-
+    builtBlock = ;
+    StringReplace, Clipboard, Clipboard, `r`n`r`n, `n, All
+    ; delimiter = |
+    if (InStr(Clipboard, "Call TEST(", true, 1, 2)) {
+        ; testArray := parseStringToArray(Clipboard, delimiter)
+        Loop, Parse, Clipboard, `n
+        {
+            firstQuote := InStr(A_LoopField, """",, 1)
+            secondQuote := InStr(A_LoopField, """",, firstQuote, 2) 
+            ; MsgBox, firstQuote = %firstQuote%. secondQuote = %secondQuote%
+            if (firstQuote && secondQuote) {
+                thisTest := SubStr(A_LoopField, firstQuote+1, secondQuote-(firstQuote+1))
+                builtBlock .= _buildTestBlock(thisTest)
+                ; MsgBox, builtBlock = %builtBlock%
+            }
+        }
+    } else{
+        firstQuote := InStr(Clipboard, """",, 1)
+        secondQuote := InStr(Clipboard, """",, firstQuote, 2) 
+        ; MsgBox, firstQuote = %firstQuote%. secondQuote = %secondQuote%
+        if (firstQuote && secondQuote) {
+            thisTest := SubStr(Clipboard, firstQuote+1, secondQuote-(firstQuote+1))
+            builtBlock .= _buildTestBlock(thisTest)
+            ; MsgBox, builtBlock = %builtBlock%
+        } else{
+            builtBlock := _buildTestBlock(Clipboard)
+        }
+    }
+    assignClipboard(true, builtBlock)
+    paste()
+    sleep(250)
     restoreClipboard(true)
 Return
 
-;; build multiple test blocks
-^+b::   ; Ctrl + Shift + b
-    testArray := parseStringToArray(Clipboard, |)
-    for index, eachTest in testArray {
-        _buildTestBlock(eachTest)
+
+;; attempt to parse out contents inside quotes from clipboard
+^+b::
+builtBlock = ;
+StringReplace, Clipboard, Clipboard, `r`n`r`n, `n, All
+Loop, Parse, Clipboard, `n
+{
+    firstQuote := InStr(A_LoopField, """",, 1)
+    secondQuote := InStr(A_LoopField, """",, firstQuote, 2) 
+    ; MsgBox, firstQuote = %firstQuote%. secondQuote = %secondQuote%
+    if (firstQuote && secondQuote) {
+        thisTest := SubStr(A_LoopField, firstQuote+1, secondQuote-(firstQuote+1))
+        builtBlock .= _buildTestBlock(thisTest)
+        ; MsgBox, builtBlock = %builtBlock%
     }
+}
+assignClipboard(true, builtBlock)
+paste()
+restoreClipboard(true)
 Return
 
 ;; prepend clipboard contents with "Call"

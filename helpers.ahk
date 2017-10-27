@@ -11,14 +11,16 @@ global StoredClip = ; global Clipboard variable
 ; ----------------------------------------------------------------------------
 
 copy(){
-    Send, {LControl Down}{c Down}
-    Send, {c Up}{LControl Up}
+    ; Send, {LControl Down}{c Down}
+    ; Send, {c Up}{LControl Up}
+    Send, ^c
     ClipWait, 1, 1
 }
 
 paste(){
-    Send, {LControl Down}{v Down}
-    Send, {v Up}{LControl Up}
+    Send, ^v
+    ; Send, {LControl Down}{v Down}
+    ; Send, {v Up}{LControl Up}
 }
 
 cut(){
@@ -61,6 +63,15 @@ getText(callRestoreClipboard){
     }
 Return
 
+::-ascii::
+toAscii := getText(true)
+Loop % StrLen(toAscii) {
+    character := SubStr(toAscii, A_Index, 1)
+    number := Asc(character)
+    Send, %number%
+}
+Return
+
 ;; inserts section separator if in sublime
 #ifWinActive ahk_class PX_WINDOW_CLASS
 ^1::	;Ctrl + 1
@@ -85,20 +96,17 @@ Return
     restoreClipboard(true)
 Return
 
-appendToClipboard() {
+appendToClipboard(appendage) {
     clipBreak = |
 
-    copy()
-    ; ClipWait, 0.5, 1
     if (!StoredClip){   ; 1. StoredClip is empty
         storeClipboard(false)
-        StoredClip := clipBreak . Clipboard
+        StoredClip := clipBreak . appendage
     }
     else{
-        StoredClip := StoredClip . clipBreak . Clipboard
+        StoredClip := StoredClip . clipBreak . appendage
     }
     assignClipboard(false, StoredClip)
-    ; MsgBox, % "StoredClip = " . StoredClip
 }
 
 clearClipboard() {
@@ -134,13 +142,12 @@ parseStringToArray(string, delimiter, wrapper := 0){
     StringReplace, string, string, ), {)}, All
     ; MsgBox, % "wrapper = " . wrapper
     if (!wrapper){
-        ; MsgBox, no wrapper
-        Loop, Parse, string, % delimiter
+        Loop, Parse, string, %delimiter%
         {
             parsedArray[A_index] := A_LoopField
         }
     }else{
-        ; MsgBox, yes wrapper
+        MsgBox, yes wrapper
         Loop, Parse, string, % delimiter
         {
             ; MsgBox, % "wrapper parse = " . A_LoopField
@@ -156,6 +163,8 @@ parseStringToArray(string, delimiter, wrapper := 0){
                 parsedArray[A_index] := tempLoopField
             }else{
                 parsedArray[A_index] := A_LoopField
+                MsgBox, % "parsedArray[A_index] = " . parsedArray[A_Index]
+                MsgBox, % "A_LoopField = " . A_LoopField
             }
         }            
     }

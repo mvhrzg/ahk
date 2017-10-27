@@ -53,30 +53,15 @@ _buildTestBlock(testName){
     StringUpper, testName, testName
     testBlock = ;
     testBlock = #**`r`n#* `r`n#*!`r`n
-    testBlock = %testBlock%Subprog %testName% : Call CLEANUP from XX1S_QLF
-    testBlock = %testBlock%`r`n
-    testBlock = %testBlock%  # setup
-    testBlock = %testBlock%  # pre-condition
-    testBlock = %testBlock%  # action
-    testBlock = %testBlock%  # assertion
+    testBlock .= "Subprog " . testName  . " : Call CLEANUP from XX1S_QLF`r`n"
+    testBlock .= "  # setup`r`n"
+    testBlock .= "  # pre-condition`r`n"
+    testBlock .= "  # action`r`n"
+    testBlock .= "  # assertion`r`n"
     testBlock = %testBlock%  Call CHECK_EQUAL(1, 0, "not implemented") From XX1S_QLF
-    testBlock = %testBlock%  # cleanup
-    testBlock = %testBlock%End
+    testBlock .="`r`n"
+    testBlock .= "  # cleanup`r`n"
+    testBlock .= "End`r`n`r`n"
 
-    assignClipboard(false, testBlock)
-    ; Send, {Enter Down}{Enter Up}{Tab Down}{Tab Up}
-    ; Send, {#} setup{Enter Down}{Enter Up}
-    ; Send, {#} pre-condition{Enter Down}{Enter Up}
-    ; Send, {#} action{Enter Down}{Enter Up}
-    ; Send, {#} assertion{Enter Down}{Enter Up}
-    ; Send, Call CHECK_EQUAL(1,0, "test not implemented") From XX1S_QLF{Enter Down}{Enter Up}
-    ; Send, {#} cleanup{Enter Down}{Enter Up}
-
-    ; Send, {Home}End
-    ; Send, {NumpadUp 8}
-
-    ; Gosub, ^.
-
-    ; Send, {F7 Down}{F7 Up}
-    ; Send, {LControl Up}
+    return testBlock
 }
