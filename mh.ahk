@@ -14,19 +14,13 @@ SendMode, Input
 
 ; append lines to clipboard
 ^+c:: ; Ctrl + Shift + c
-    Input, shouldClear, L1T0.5,,
-    If (shouldClear = "c"){
-        clearClipboard()
-        MsgBox, cleared
-    }Else{
-        storeClipboard(true)
-        appendToClipboard()
-        ; clearClipboard()
-        ; array := parseStringToArray(StoredClip, "|")
-    }
+    storeClipboard(true)
+    appendToClipboard()
+    clearClipboard()
+    ; array := parseStringToArray(StoredClip, "|")
 Return
 
-;; clear clipboard
+;; clears clipboard
 ^!BackSpace:: ; Ctrl + Alt + Backspace
     clearClipboard()    ; clear it
 Return
@@ -48,20 +42,18 @@ Return
 
 ;; switch to open sublime tab if open. otherwise, open sublime
 #s:: ; Win + s
-    SetTitleMatchMode, 2    ; open a window if its class contains Sublime Text
     Process, Exist, sublime_text.exe ; check if sublime is running
     If (errorLevel) ; if process exists, switch to window
-        WinActivate, Sublime Text
+        WinActivate, ahk_class PX_WINDOW_CLASS
     Else ; if process doesn't exist, errorLevel = 0
         run, "C:\Program Files\Sublime Text 3\sublime_text.exe"
 Return
 
 ;; switch to open firefox tab if open. otherwise, open firefox
 #`:: ; Win + `
-    SetTitleMatchMode, 2    ; open a window if its class contains Mozilla Firefox
-    Process, Exist, firefox.exe ; check if sublime is running
+    Process, Exist, firefox.exe ; check if firefox is running
     If (errorLevel) ; if process exists, switch to window
-        WinActivate, Mozilla Firefox
+        WinActivate, ahk_class MozillaWindowClass
     Else ; if process doesn't exist, errorLevel = 0
         run, "C:\Program Files (x86)\Mozilla Firefox\firefox.exe"
 Return
@@ -69,11 +61,12 @@ Return
 #q::    ; Win + q to switch to eclipse
     Goto, #5
 Return
-;; switch to open eclipse tab if eclipse is open. otherwise, open eclipse
+
+;; switch to open eclipse tab if open. otherwise, open eclipse
 #5:: ; Win + 5
     Process, Exist, eclipse.exe ; check if eclipse is running
     If (errorLevel) ; if process exists, switch to window
-        WinActivate, workspace
+        WinActivate, workspace ; or ahk_class SWT_Window0
     Else ; if process doesn't exist, errorLevel = 0
         run, "C:\Program Files (x86)\eclipse\eclipse.exe"
 Return
@@ -101,7 +94,7 @@ Return
     storeClipboard(true)
     cut()
     ClipWait, 1.5, 1
-    Send, %StoredClip%
+    paste()
 return
 ; [end MING64]
 ; ----------------------------------------------------------------------------
@@ -114,31 +107,33 @@ return
 ; ----------------------------------------------------------------------------
 ;; makes all selected text upper case
 ^!u::    ; Ctrl + Alt + u
-    Send, {CtrlDown}c{CtrlUp}   ; Ctrl + c
-    ClipWait, 1, 1
+    copy()   ; Ctrl + c
     StringUpper, Clipboard, Clipboard
-    Send, {CtrlDown}v{CtrlUp}   ; Ctrl + v
+    paste()
 Return
 
 ; inverts case of selected text
-!x::    ; Alt + x
+~!x::    ; Alt + x
     invertedClip = ;
-    StringCaseSense, On
-    cut()
+    storeClipboard(true)    ; store previous clipboard and clear it
+    sleep(100)
+    cut()                   ; cut selected text
+
     Loop % StrLen(Clipboard) {
         character := SubStr(Clipboard, A_Index, 1)  ; look at each character separately
         ; MsgBox, character is %character%
         if (isUpper(character)) {
             StringLower, character, character 
-            ; Send, % character
-        } else{
+        }
+        if (isLower(character)){
             StringUpper, character, character
-            ; Send, % character
         }
         invertedClip .= character
     }
-    Clipboard := invertedClip
+    assignClipboard(true, invertedClip) ; clear clipboard, then assign to invertedClip
     paste()
+    sleep(100)
+    restoreClipboard(true)  ; clear clipboard and restore to previous
 return
 ; [end Text]
 ; ----------------------------------------------------------------------------

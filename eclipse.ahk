@@ -3,6 +3,11 @@
 #SingleInstance, force
 SendMode, Input
 
+;; this needs to be here to run preventKeySticking after building test block (^b)
+#Persistent
+SetTimer, ^b, 6000
+Return
+
 ;; print QLF outside of eclipse
 ^!q::   ; Ctrl + Alt + q
 Input, contents,,{Enter},,                          ; start with 1, 2, 3; enter abbreviation; press Enter
@@ -21,11 +26,11 @@ Return
 #ifWinActive ahk_class SWT_Window0
 ;; CREATE
 ::-c::    ; auto-complete -c
-    lineText := getText()
+    lineText := getText(true)
     if(lineText){
         tableCode := % lineText
     }else{
-        tableCode := ""
+        tableCode = ""
     }
     Send, Call CREATE(%tableCode%, "",) From XX1S_QLF{Left 17}
 Return
@@ -35,59 +40,9 @@ Return
     Send, Call EMBALM("", "") From XX1S_QLF{Left 20}
 Return
 
-;; paste MAKEs as REMOVEs @DEPRECATED
-; ^+r::   ; Ctrl + Shift + r
-;     StringCaseSense, On
-;     StringReplace, clipboard, clipboard, MAKE, REMOVE, All  ; replace MAKE with REMOVE
-;     StringCaseSense, Off
-
-;     storeClipboard(false)
-;     StringReplace, Clipboard, Clipboard, `r`n`r`n, `n, All                ; remove LF
-;     StringReplace, Clipboard, Clipboard, XX1S_QLF, XX1S_QLF, UseErrorLevel
-;     counter = 0
-
-;     Loop, Parse, Clipboard, `n
-;     {
-;         inString := -1   ; variable reset
-;         ; TODO: incorporate the string "SITE=" for PJ make/remove
-;         inString := InStr(clipboard, "PROJECT=", false)    ; look for PROJECT=
-;         if(inString > 0)   ; if string is found
-;         {
-;             findSecondPlus := -1    ; variable reset
-;             ; find second occurrence of +, starting at where this line"s PROJECT= was found + 2
-;             findSecondPlus := InStr(clipboard, "+",, inString, counter+2)
-;             if(findSecondPlus > 0) ; if a second + is found
-;             {
-;                 beginningString := SubStr(clipboard, 1, (findSecondPlus-2))   ; build the beginning of the string until the character before second +
-;                 findEnd := InStr(clipboard, ") From XX1S_QLF", true, findSecondPlus) ; find the end of the string -- returns position of )
-;                 endingString := SubStr(clipboard, findEnd) ; extract the end of the make call
-;                 clipboard = ; clear clipboard
-;                 clipboard := beginningString . endingString
-;                 counter += 1
-;             }
-;         }
-;         ; else{
-;         ;     Input, howManyAssignments, L1, Space
-;         ;     inString := (Clipboard, "+",,1, (howManyAssignments*2))    ; look for position of whatever assignment we want *2, so we can trim back
-;         ;     MsgBox, found secondPlus at %inString%
-;         ;     beginningString := SubStr(clipboard, 1, (inString-2))   ; build the beginning of the string until the character before second +
-;         ;     findEnd := InStr(clipboard, ") From XX1S_QLF", true, inString) ; find the end of the string -- returns position of )
-;         ;     endingString := SubStr(clipboard, findEnd) ; extract the end of the make call
-;         ;     clipboard = ; clear clipboard
-;         ;     clipboard := beginningString . endingString
-;         ;     counter += 1
-;         ; }
-;     }
-
-;     ; paste the string
-;     Send, ^v
-;     Sleep, 10
-;     restoreClipboard(true)
-; Return
-
 ; variable declarations
 ::-v::   ; auto-complete -v
-    lineText  := getText()
+    lineText  := getText(true)
     ; parts: [1] scope (l or g), [2]type (i, c, d, dt, dtm, f (file)), [3]variable/file name, [4]value/file abbreviation #, [4]global modifier
     parts := parseStringToArray(lineText, A_Space)
     scope   := "Local "
@@ -148,7 +103,7 @@ return
 
 ; log_instance
 ::-log::  ; auto-complete hotkey
-    instance := getText()
+    instance := getText(true)
     if(instance){
         Send, Call LOG_INSTANCE(%instance%) From XX1S_QLF
     }else{
@@ -187,50 +142,71 @@ Return
     }
 Return
 
-; ----------------------------------------------------------------------------
-;; TODO: INSERT HOTKEY TO CLEAR LAST LINE OF CLIPBOARD
-; ----------------------------------------------------------------------------
+;; splits currentl line on cursor and adds & as first character of new line
+^Enter::    ; Ctrl + Enter
+    if (GetKeyState("LControl", "P") = true){
+        Send, {LControl Up}
+    }
+    Send, {Enter Down}{Enter Up}
+    Send, {LShift Down}{Home Down}{Home Up}{Home Down}{Home Up}
+    Send, {7 Down}{7 Up}
+    Send, {LShift Up}
+Return
 
-;; paste test block
+;; re-run previous test
+^r::    ; Ctrl + r
+    Send, {F7 Down}{F7 Up}                  ; compile
+    sleep(500)
+    Send, {Shift Down}{Alt Down}{q Down}    ; hit view-console shortcut
+    Send, {Shift Up}{Alt Up}{q Up}          ; release view-console shortcut
+    sleep(100)
+    Send, {c Down}{c Up}                    ; hit and release terminal console key
+    sleep(100)                              ; wait for terminal to open
+    Send, {NumpadUp}{Enter}                 ; hit up + enter to run previous
+Return
+
+;; build single test block
 ^b::   ; Ctrl + b
+    doneWithBuild := false
     storeClipboard(false)
     StringUpper, Clipboard, Clipboard
     Send, Subprog %clipboard% : Call CLEANUP from XX1S_QLF
-    Send, {Enter}{Tab}
-    Send, {#} setup{Enter}
-    Send, {#} pre-condition{Enter}
-    Send, {#} action{Enter}
-    Send, {#} assertion{Enter}
-    Send, Call CHECK_EQUAL(1,0, "test not implemented") From XX1S_QLF{Enter}
-    Send, {#} cleanup{Enter}
+    Send, {Enter Down}{Enter Up}{Tab Down}{Tab Up}
+    Send, {#} setup{Enter Down}{Enter Up}
+    Send, {#} pre-condition{Enter Down}{Enter Up}
+    Send, {#} action{Enter Down}{Enter Up}
+    Send, {#} assertion{Enter Down}{Enter Up}
+    Send, Call CHECK_EQUAL(1,0, "test not implemented") From XX1S_QLF{Enter Down}{Enter Up}
+    Send, {#} cleanup{Enter Down}{Enter Up}
 
     Send, {Home}End
-    Send, {NumpadUp 8***}
+    Send, {NumpadUp 8}
 
     Gosub, ^.
 
-    ; prevent logical/virtual CtrlUp
-    GetKeyState, state, Control
-    if (state = D){ ; if control is down
-        MsgBox, ctrl is down. pushing up
-        Send, {CtrlUp}
-    }
+    Send, {F7 Down}{F7 Up}
+    doneWithBuild := true
 
-    Send, {F7}
     restoreClipboard(true)
+Return
 
+;; build multiple test blocks
+^+b::   ; Ctrl + Shift + b
+    testArray := parseStringToArray(Clipboard, |)
+    for index, eachTest in testArray {
+        _buildTestBlock(eachTest)
+    }
 Return
 
 ;; prepend clipboard contents with "Call"
-^+c::    ;Ctrl + Shift + c
+^+a::    ;Ctrl + Shift + a
     Send, Call{Space}
     paste()
 Return
 
 ;; paste freegroup and kill
-^+f::   ; Ctrl + Shift + f
-    Input, code,, {Enter},,
-    StringUpper, code, code
+::-fg::   ; auto-complete: -fg
+    code := getText(true)
     _freeGroup(code)
 Return
 
@@ -293,7 +269,7 @@ Return
 
 ;; add comment block in eclipse
 ^.::    ; Ctrl + .
-    Send, {#}{*}{*}{Enter}
+    Send, {#}{*}{*}{Enter Down}{Enter Up}
 Return
 
 ;; print INLINE_LOG with comment
@@ -317,7 +293,7 @@ Return
 
 ;; ASETERROR
 ::-ase::   ; auto-complete -aset
-    lineText := getText()   ; get line text
+    lineText := getText(true)   ; get line text
     ; parts: [1]instance, [2]field name, [3]text, [4]severity, [5]assignable integer
     parts := parseStringToArray(lineText, A_Space, """")   ; parse each thing separated by spaces
 

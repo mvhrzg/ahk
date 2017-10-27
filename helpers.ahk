@@ -1,7 +1,9 @@
 #Include, %A_ScriptDir%\mh.ahk
-global StoredClip = ; global Clipboard variable
 SendMode, Input
 #SingleInstance, force
+;; [start] Globals
+global StoredClip = ; global Clipboard variable
+;; [end] Globals
 
 /*
 * Debugging and helpers: used for debugging/creating window specific hotkeys
@@ -9,32 +11,42 @@ SendMode, Input
 ; ----------------------------------------------------------------------------
 
 copy(){
-    Send, ^c
+    Send, {LControl Down}{c Down}
+    Send, {c Up}{LControl Up}
+    ClipWait, 1, 1
 }
 
 paste(){
-    Send, ^v
+    Send, {LControl Down}{v Down}
+    Send, {v Up}{LControl Up}
 }
 
 cut(){
-    Send, ^x
+    Send, {LControl Down}{x Down}
+    Send, {x Up}{LControl Up}
+    ClipWait, 1, 1
 }
 
-getText(){
+sleep(milliseconds){
+    Sleep, % milliseconds
+}
+
+getText(callRestoreClipboard){
     storeClipboard(true)
-    Sleep, 250
+    sleep(250)
     textToGet =
     Send, {ShiftDown}{Home}{ShiftUp}
     cut()
     ClipWait 1, 1
     textToGet = %Clipboard%
-    restoreClipboard(true)
+    if (callRestoreClipboard){
+        restoreClipboard(true)
+    }
 
     return textToGet
 }
 
-;; displays all active windows (with ID, class and title) in a popup
-;; loop through all open windows and print their info
+;; displays all active windows (with ID, class, title and text) in a popup
 ^+!l::	;Ctrl + Shift + Alt + l
     WinGet, id, list,,, Program Manager
     Loop, %id%
@@ -52,13 +64,9 @@ Return
 ;; inserts section separator if in sublime
 #ifWinActive ahk_class PX_WINDOW_CLASS
 ^1::	;Ctrl + 1
-	SetTitleMatchMode, 3
-	#ifWinActive, mh.ahk
-		Send, {Enter}
-		Send, ^/   ;Ctrl + / 
-		Send, {- 76}
-	#ifWinActive
-
+	Send, {Enter}
+	Send, ^/   ;Ctrl + / 
+	Send, {- 76}
 Return
 #ifWinActive
 
@@ -77,24 +85,25 @@ Return
     restoreClipboard(true)
 Return
 
-appendToClipboard(){
+appendToClipboard() {
     clipBreak = |
 
     copy()
-    ClipWait, 0.5, 1
+    ; ClipWait, 0.5, 1
     if (!StoredClip){   ; 1. StoredClip is empty
         storeClipboard(false)
-        ; StoredClip := clipBreak . Clipboard ; 1. StoredClip = hello?
+        StoredClip := clipBreak . Clipboard
     }
-    else{   ; 2. StoredClip = hello?
-        ; StoredClip = hello?|hello!|
+    else{
         StoredClip := StoredClip . clipBreak . Clipboard
     }
+    assignClipboard(false, StoredClip)
+    ; MsgBox, % "StoredClip = " . StoredClip
 }
 
 clearClipboard() {
      Clipboard = ; clear clipboard
-     Sleep, 100
+     sleep(100)
 }
 
 storeClipboard(clearAfterStore){
@@ -102,7 +111,6 @@ storeClipboard(clearAfterStore){
     if(clearAfterStore){
         clearClipboard()
     }
-    ; MsgBox, % "storedClip = " . StoredClip
 }
 
 restoreClipboard(clearBeforeRestore){
@@ -112,21 +120,28 @@ restoreClipboard(clearBeforeRestore){
     Clipboard := StoredClip
 }
 
-parseStringToArray(input, delimiter, wrapper := 0){
+assignClipboard(clearFirst, variable := ""){
+    if (clearFirst){
+        clearClipboard()
+    }
+    Clipboard := variable
+}
+
+parseStringToArray(string, delimiter, wrapper := 0){
     parsedArray := Object()
-    StringReplace, input, input, +, {+}, All
-    StringReplace, input, input, (, {(}, All
-    StringReplace, input, input, ), {)}, All
+    StringReplace, string, string, +, {+}, All
+    StringReplace, string, string, (, {(}, All
+    StringReplace, string, string, ), {)}, All
     ; MsgBox, % "wrapper = " . wrapper
     if (!wrapper){
         ; MsgBox, no wrapper
-        Loop, Parse, input, % delimiter
+        Loop, Parse, string, % delimiter
         {
             parsedArray[A_index] := A_LoopField
         }
     }else{
         ; MsgBox, yes wrapper
-        Loop, Parse, input, % delimiter
+        Loop, Parse, string, % delimiter
         {
             ; MsgBox, % "wrapper parse = " . A_LoopField
             if (InStr(A_LoopField, wrapper))

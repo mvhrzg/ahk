@@ -4,7 +4,7 @@ SendMode, Input
 
 ;; instance text helper
 _instance(contents){
-    StringLeft, flag, contents, 1, 1                    ; get XX1B or XX3F code
+    StringLeft, flag, contents, 1, 1  ; get XX1B or XX3F code
     if (flag = 1)
         code = XX1B
     else if (flag = 3)
@@ -47,4 +47,36 @@ _qlf(contents){
 
 _freeGroup(code){
     Send, FreeGroup %code% : Kill %code%
+}
+
+_buildTestBlock(testName){
+    StringUpper, testName, testName
+    testBlock = ;
+    testBlock = #**`r`n#* `r`n#*!`r`n
+    testBlock = %testBlock%Subprog %testName% : Call CLEANUP from XX1S_QLF
+    testBlock = %testBlock%`r`n
+    testBlock = %testBlock%  # setup
+    testBlock = %testBlock%  # pre-condition
+    testBlock = %testBlock%  # action
+    testBlock = %testBlock%  # assertion
+    testBlock = %testBlock%  Call CHECK_EQUAL(1, 0, "not implemented") From XX1S_QLF
+    testBlock = %testBlock%  # cleanup
+    testBlock = %testBlock%End
+
+    assignClipboard(false, testBlock)
+    ; Send, {Enter Down}{Enter Up}{Tab Down}{Tab Up}
+    ; Send, {#} setup{Enter Down}{Enter Up}
+    ; Send, {#} pre-condition{Enter Down}{Enter Up}
+    ; Send, {#} action{Enter Down}{Enter Up}
+    ; Send, {#} assertion{Enter Down}{Enter Up}
+    ; Send, Call CHECK_EQUAL(1,0, "test not implemented") From XX1S_QLF{Enter Down}{Enter Up}
+    ; Send, {#} cleanup{Enter Down}{Enter Up}
+
+    ; Send, {Home}End
+    ; Send, {NumpadUp 8}
+
+    ; Gosub, ^.
+
+    ; Send, {F7 Down}{F7 Up}
+    ; Send, {LControl Up}
 }
