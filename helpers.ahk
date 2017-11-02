@@ -27,6 +27,7 @@ cut(){
     Send, {LControl Down}{x Down}
     Send, {x Up}{LControl Up}
     ClipWait, 1, 1
+    sleep(250)
 }
 
 sleep(milliseconds){
@@ -63,14 +64,20 @@ getText(callRestoreClipboard){
     }
 Return
 
-::-ascii::
+; replaces selected text with string os ascii numbers for each character
+::-ascii::  ; auto-complete -ascii
 toAscii := getText(true)
 Loop % StrLen(toAscii) {
     character := SubStr(toAscii, A_Index, 1)
     number := Asc(character)
-    Send, %number%
+    Send, %number%{Space}
 }
 Return
+
+; returns ascii number of character passed in
+ascii(character){
+    return Asc(character)
+}
 
 ;; inserts section separator if in sublime
 #ifWinActive ahk_class PX_WINDOW_CLASS
@@ -125,10 +132,10 @@ restoreClipboard(clearBeforeRestore){
     if (clearBeforeRestore){
         clearClipboard()
     }
-    Clipboard := StoredClip
+    assignClipboard(true, StoredClip)
 }
 
-assignClipboard(clearFirst, variable := ""){
+assignClipboard(clearFirst, variable := "") {
     if (clearFirst){
         clearClipboard()
     }
@@ -174,10 +181,12 @@ parseStringToArray(string, delimiter, wrapper := 0){
 
 ; returns true if a character is upper cased
 isUpper(c) {
-  return (C >= "A") and (C <= "Z")
+    StringCaseSense, On
+    return (c >= "A") && (c <= "Z")
 }
 
 ; returns true if a character is lower cased
 isLower(c) {
-  return (C >= "a") and (C <= "z")
+    ; StringCaseSense, On
+    return (c >= "a") && (c <= "z")
 }

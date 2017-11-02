@@ -69,6 +69,24 @@ Return
     Else ; if process doesn't exist, errorLevel = 0
         run, "C:\Program Files (x86)\eclipse\eclipse.exe"
 Return
+
+;; <<<<<<<< cycle through windows of same class >>>>>>>>
+#PgDn:: ; Wing + PgDn : next window
+WinGetClass, CurrentActive, A
+WinGet, Instances, Count, ahk_class %CurrentActive%
+If Instances > 1
+    WinSet, Bottom,, A
+WinActivate, ahk_class %CurrentActive%
+return
+
+#PgUp:: ; Wing + PgUp : previous window
+WinGetClass, CurrentActive, A
+WinGet, Instances, Count, ahk_class %CurrentActive%
+If Instances > 1
+    WinActivateBottom, ahk_class %CurrentActive%
+return
+;; <<<<<<<< [end] cycle windows of same class >>>>>>>>
+
 ; [end Taskbar]
 ; ----------------------------------------------------------------------------
 
@@ -88,16 +106,8 @@ Return
     Send, {!}g{Space}AutoHotKey{Space}
 Return
 #IfWinNotActive
-
-^+v::   ; Ctrl + Shift + v - paste and replace clipboard contents with currently selected text
-    storeClipboard(true)
-    cut()
-    ClipWait, 1.5, 1
-    paste()
-return
 ; [end MING64]
 ; ----------------------------------------------------------------------------
-
 
 ; ----------------------------------------------------------------------------
 /*
@@ -112,27 +122,39 @@ return
 Return
 
 ; inverts case of selected text
-~!x::    ; Alt + x
+!x::    ; Alt + x
     invertedClip = ;
-    storeClipboard(true)    ; store previous clipboard and clear it
-    sleep(100)
+    storeClipboard(false)    ; store previous clipboard and clear it
     cut()                   ; cut selected text
 
-    Loop % StrLen(Clipboard) {
-        character := SubStr(Clipboard, A_Index, 1)  ; look at each character separately
-        ; MsgBox, character is %character%
-        if (isUpper(character)) {
-            StringLower, character, character 
+    Loop, Parse, Clipboard
+    {
+        if (isUpper(A_LoopField)){
+            StringLower, character, A_LoopField
+        }else if (isLower(A_LoopField)){
+            StringUpper, character, A_LoopField
+        ; if this character is a space, any punctuation, etc    
+        }else if ((ascii(A_LoopField) >= 32  && ascii(A_LoopField) <= 64) || (ascii(A_LoopField) >= 91  && ascii(A_LoopField) <= 96) || (ascii(A_LoopField) >= 123 && ascii(A_LoopField) <= 126)){
+            character := A_LoopField
         }
-        if (isLower(character)){
-            StringUpper, character, character
-        }
+
         invertedClip .= character
     }
     assignClipboard(true, invertedClip) ; clear clipboard, then assign to invertedClip
     paste()
-    sleep(100)
+    sleep(250)
     restoreClipboard(true)  ; clear clipboard and restore to previous
+return
+
+; paste and replace clipboard contents with currently selected text
+^+v::   ; Ctrl + Shift + v
+    storeClipboard(false)               ; stores clip without clearing after
+    cut()                               ; cut the current selection
+    tempClip := Clipboard               ; temporarily store selection
+    restoreClipboard(true)              ; clear clip and restore clip to initial state
+    paste()                             ; paste initial clip
+    sleep(250)                          ; this has to be here. any less, clip is empty at this point
+    assignClipboard(false, tempClip)    ; replace initial clip with latest selection (tempClip)
 return
 ; [end Text]
 ; ----------------------------------------------------------------------------

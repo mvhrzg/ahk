@@ -50,7 +50,6 @@ _freeGroup(code){
 }
 
 _buildTestBlock(testName){
-    StringUpper, testName, testName
     testBlock = ;
     testBlock = #**`r`n#* `r`n#*!`r`n
     testBlock .= "Subprog " . testName  . " : Call CLEANUP from XX1S_QLF`r`n"

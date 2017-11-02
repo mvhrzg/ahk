@@ -202,27 +202,6 @@ Return
     restoreClipboard(true)
 Return
 
-
-;; attempt to parse out contents inside quotes from clipboard
-^+b::
-builtBlock = ;
-StringReplace, Clipboard, Clipboard, `r`n`r`n, `n, All
-Loop, Parse, Clipboard, `n
-{
-    firstQuote := InStr(A_LoopField, """",, 1)
-    secondQuote := InStr(A_LoopField, """",, firstQuote, 2) 
-    ; MsgBox, firstQuote = %firstQuote%. secondQuote = %secondQuote%
-    if (firstQuote && secondQuote) {
-        thisTest := SubStr(A_LoopField, firstQuote+1, secondQuote-(firstQuote+1))
-        builtBlock .= _buildTestBlock(thisTest)
-        ; MsgBox, builtBlock = %builtBlock%
-    }
-}
-assignClipboard(true, builtBlock)
-paste()
-restoreClipboard(true)
-Return
-
 ;; prepend clipboard contents with "Call"
 ^+a::    ;Ctrl + Shift + a
     Send, Call{Space}
