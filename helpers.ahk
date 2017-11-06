@@ -40,13 +40,28 @@ getText(callRestoreClipboard){
     textToGet =
     Send, {ShiftDown}{Home}{ShiftUp}
     cut()
-    ClipWait 1, 1
-    textToGet = %Clipboard%
+    textToGet := Clipboard
     if (callRestoreClipboard){
         restoreClipboard(true)
     }
 
     return textToGet
+}
+
+;; count selected characters, display number
+^#c::   ; Ctrl + Win + c
+    storeClipboard(true)
+    copy()   ; copy selected content
+    ClipWait, 1, "text"
+    length := StrLen(Clipboard)
+    MsgBox, 0, Character length, %length% characters selected, 5
+    restoreClipboard(true)
+Return
+
+;; count selected characters, return number
+countCharacters(){
+    selectedText := getText(true)
+    return StrLen(selectedText)
 }
 
 ;; displays all active windows (with ID, class, title and text) in a popup
@@ -91,16 +106,6 @@ Return
 ;; key history window : used for debugging hotkeys
 *ScrollLock::   ; ScrollLock
     KeyHistory
-Return
-
-;; count selected characters
-^#c::   ; Ctrl + Win + c
-    storeClipboard(true)
-    copy()   ; copy selected content
-    ClipWait, 1, "text"
-    length := StrLen(Clipboard)
-    MsgBox, 0, Character length, %length% characters selected, 5
-    restoreClipboard(true)
 Return
 
 appendToClipboard(appendage) {

@@ -58,6 +58,12 @@ Return
 ; helpers
 ; ----------------------------------------------------------------------------
 
+; clears clipboard
+clearClipboard() {
+     Clipboard = ; clear clipboard
+     sleep(100)
+}
+
 ; stores the clipboard in a global var so we can restore it after the operation
 storeClipboard(clearAfterStore){
     StoredClip := Clipboard

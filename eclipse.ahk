@@ -32,7 +32,7 @@ Return
     }else{
         tableCode = ""
     }
-    Send, Call CREATE(%tableCode%, "",) From XX1S_QLF{Left 17}
+    Send, Call CREATE("%tableCode%", "",) From XX1S_QLF{Left 17}
 Return
 
 ;; EMBALM
@@ -114,11 +114,11 @@ Return
 
 ; prepend CST_ to text
 ::cst::
-    Send, CST_
+    Send, [V]CST_
 Return
 
 ::cstx::
-    Send, CST_XX1B_
+    Send, [V]CST_XX1B_
 Return
 
 ;; add test stub
@@ -142,15 +142,25 @@ Return
     }
 Return
 
-;; splits currentl line on cursor and adds & as first character of new line
+;; splits current line on cursor and adds &+{Tab}";" at beginning of new line
 ^Enter::    ; Ctrl + Enter
-    if (GetKeyState("LControl", "P") = true){
-        Send, {LControl Up}
-    }
-    Send, {Enter Down}{Enter Up}
-    Send, {LShift Down}{Home Down}{Home Up}{Home Down}{Home Up}
-    Send, {7 Down}{7 Up}
-    Send, {LShift Up}
+    newFieldLine = `r`n&+  ";"
+    storeClipboard(false)
+    assignClipboard(false, newFieldLine)
+    paste()
+    sleep(100)
+    restoreClipboard(false)
+    Send, {Left 3}
+Return
+
+;; splits current line on cursor and adds & as first character of new line
+^NumpadEnter::  ; Ctrl + NumpadEnter
+    newFieldLine = `n&
+    storeClipboard(false)
+    assignClipboard(false, newFieldLine)
+    paste()
+    sleep(175)
+    restoreClipboard(false)
 Return
 
 ;; re-run previous test
@@ -210,8 +220,11 @@ Return
 
 ;; paste freegroup and kill
 ::-fg::   ; auto-complete: -fg
-    code := getText(true)
+    storeClipboard(false)
+    code := getText(false)
     _freeGroup(code)
+    sleep(100)
+    restoreClipboard(false)
 Return
 
 ;; insert full timing log calls
@@ -228,20 +241,6 @@ Return
     Send, Call ADD_UNTIMED_LOG_LINE("", %logNumber%) From XX1S_DEBUG{Home}{Right 27}
 Return
 
-;; insert local file call
-^!l::   ; Ctrl + Alt + l
-    Input, table,, {Enter},,    ; type 1 or 3 + table abbreviation (without activity code) + Enter
-    StringLeft, flag, table, 1
-    if(flag = 1){
-        code = XX1B
-    }
-    else if(flag = 3){
-        code = XX3F
-    }
-    StringRight, table, table, StrLen(table) - 1
-    Send, Local File %code%%table%{[}{]}{Left 1}
-Return
-
 ;; print QLF string and run it
 ^!q::
     Input, contents,,{Enter},,                          ; start with 1, 2, 3; enter abbreviation; press Enter
@@ -255,7 +254,7 @@ Return
 Return
 
 ;; build instance
-^!i::
+^!i::   ; Ctrl + Alt + i
     Input, contents,,{Enter},,
     r_array := _instance(contents)
     if(r_array [1] != "")  ; if we returned the code
@@ -265,9 +264,7 @@ Return
         name := r_array[3]
 
         identifier := (name ? name : abbrev) ; if name is empty, use abbrev : else, use name
-        Send, Local Instance %identifier% Using C_%code%%abbrev% : %identifier% = NewInstance C_%code%%abbrev% AllocGroup null{Enter 2}{Tab}
-        _freeGroup(identifier)
-        ; Send, %identifier%{Enter}
+        Send, Local Instance %identifier% Using C_%code%%abbrev% : [L]%identifier% = NewInstance C_%code%%abbrev% AllocGroup null
     }
 Return
 
@@ -340,7 +337,7 @@ Return
         }
         
     }else{
-        Send, Callmet this.ASETERROR("", "", CST_)
+        Send, Callmet this.ASETERROR("", "", [V]CST_)
     }
 Return
 

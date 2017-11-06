@@ -7,6 +7,8 @@ _instance(contents){
     StringLeft, flag, contents, 1, 1  ; get XX1B or XX3F code
     if (flag = 1)
         code = XX1B
+    else if (flag = 2)
+        code = XX1S
     else if (flag = 3)
         code = XX3F
     else if (flag != 1 and flag != 3){
@@ -46,7 +48,9 @@ _qlf(contents){
 }
 
 _freeGroup(code){
-    Send, FreeGroup %code% : Kill %code%
+    freeAndKill := "FreeGroup [L]" . code . ": Kill [L]" . code
+    assignClipboard(false, freeAndKill)
+    paste()
 }
 
 _buildTestBlock(testName){
