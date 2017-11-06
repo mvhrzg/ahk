@@ -11,6 +11,7 @@ global StoredClip = ; global Clipboard variable
 * 3: copy each test name without quotes (tests should be on different lines)
 */
 ; ----------------------------------------------------------------------------
+#ifWinActive ahk_class SWT_Window0
 ;; build single or multiple test block(s)
 ^b::   ; Ctrl + b
     storeClipboard(false)
@@ -52,6 +53,7 @@ global StoredClip = ; global Clipboard variable
     sleep(250)
     restoreClipboard(true)
 Return
+#ifWinActive
 
 
 ; ----------------------------------------------------------------------------
