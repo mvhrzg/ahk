@@ -103,13 +103,23 @@ return
 
 ; log_instance
 ::-log::  ; auto-complete hotkey
+    storeClipboard(true)
     instance := getText(true)
+    instance := RTrim(instance) ; remove trailing space between instanceName and -log
+    call = ;
     if(instance){
-        Send, Call LOG_INSTANCE(%instance%) From XX1S_QLF
+        call := % "Call LOG_INSTANCE(" . instance . ") From XX1S_QLF"
+        assignClipboard(false, call)
+        paste()
+        sleep(250)
     }else{
-        Send, Call LOG_INSTANCE() From XX1S_QLF{Left 15}
+        call := "Call LOG_INSTANCE() From XX1S_QLF"
+        assignClipboard(false, call)
+        paste()
+        sleep(100)
+        Send, {Left 15}
     }
-
+    restoreClipboard(false)
 Return
 
 ; prepend CST_ to text
@@ -222,6 +232,7 @@ Return
 ::-fg::   ; auto-complete: -fg
     storeClipboard(false)
     code := getText(false)
+    code := RTrim(code)
     _freeGroup(code)
     sleep(100)
     restoreClipboard(false)

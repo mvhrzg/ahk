@@ -48,7 +48,7 @@ _qlf(contents){
 }
 
 _freeGroup(code){
-    freeAndKill := "FreeGroup [L]" . code . ": Kill [L]" . code
+    freeAndKill := "FreeGroup " . code . " : Kill " . code
     assignClipboard(false, freeAndKill)
     paste()
 }
@@ -57,13 +57,13 @@ _buildTestBlock(testName){
     testBlock = ;
     testBlock = #**`r`n#* `r`n#*!`r`n
     testBlock .= "Subprog " . testName  . " : Call CLEANUP from XX1S_QLF`r`n"
-    testBlock .= "  # setup`r`n"
-    testBlock .= "  # pre-condition`r`n"
-    testBlock .= "  # action`r`n"
-    testBlock .= "  # assertion`r`n"
+    testBlock .= "  # setup`r`n`r`n"
+    testBlock .= "  # pre-condition`r`n`r`n"
+    testBlock .= "  # action`r`n`r`n"
+    testBlock .= "  # assertion`r`n`r`n"
     testBlock = %testBlock%  Call CHECK_EQUAL(1, 0, "not implemented") From XX1S_QLF
-    testBlock .="`r`n"
-    testBlock .= "  # cleanup`r`n"
+    testBlock .="`r`n`r`n"
+    testBlock .= "  # cleanup`r`n`r`n"
     testBlock .= "End`r`n`r`n"
 
     return testBlock

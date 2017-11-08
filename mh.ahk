@@ -36,7 +36,7 @@ Return
     If (errorLevel) ; if process exists, switch to window
         WinActivate, HipChat
     Else ; if process doesn't exist, errorLevel = 0
-        run, "C:\Program Files (x86)\Atlassian\HipChat4\HipChat.exe"
+        run, "C:\ProgramData\Microsoft\Windows\Start Menu\Programs\HipChat\HipChat.lnk"
 Return
 
 ;; switch to open sublime tab if open. otherwise, open sublime
