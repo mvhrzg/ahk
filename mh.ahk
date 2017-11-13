@@ -70,6 +70,29 @@ Return
         run, "C:\Program Files (x86)\eclipse\eclipse.exe"
 Return
 
+;; switch to open amazon music window
+#LAlt::    ; Win + leftAlt
+    Process, Exist, "Amazon Music.exe" ; check if amazon music is running
+    If (errorLevel) ; if process exists, switch to window
+        WinActivate, ahk_class Amazon Music
+    Else ; if process doesn't exist, errorLevel = 0
+        run, "C:\Users\Mariana\AppData\Local\Amazon Music\Amazon Music.exe"
+Return
+
+; switch to task manager window if not open, or open
+#Esc::
+    Send, ^+{Esc}
+Return
+
+;; switch to SSMS
+#CapsLock::
+    Process, Exist, Ssms.exe ; check if running
+    If (errorLevel) ; if process exists, switch to window
+        WinActivate, ahk_id 0x5041e
+    Else ; if process doesn't exist, errorLevel = 0
+        run, "C:\Users\Mariana\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Amazon Music.lnk"
+Return
+
 ;; <<<<<<<< cycle through windows of same class >>>>>>>>
 #PgDn:: ; Wing + PgDn : next window
 WinGetClass, CurrentActive, A
