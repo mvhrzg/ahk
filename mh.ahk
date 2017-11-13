@@ -94,6 +94,14 @@ Return
 Return
 
 ;; <<<<<<<< cycle through windows of same class >>>>>>>>
+^`:: ; Ctrl + ` : next window
+WinGetClass, CurrentActive, A
+WinGet, Instances, Count, ahk_class %CurrentActive%
+If Instances > 1
+    WinSet, Bottom,, A
+WinActivate, ahk_class %CurrentActive%
+return
+
 #PgDn:: ; Wing + PgDn : next window
 WinGetClass, CurrentActive, A
 WinGet, Instances, Count, ahk_class %CurrentActive%
