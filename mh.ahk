@@ -43,7 +43,7 @@ Return
 #s:: ; Win + s
     Process, Exist, sublime_text.exe ; check if sublime is running
     If (errorLevel) ; if process exists, switch to window
-        WinActivate, ahk_class PX_WINDOW_CLASS
+        WinActivate, ahk_exe sublime_text.exe ; ahk_class PX_WINDOW_CLASS
     Else ; if process doesn't exist, errorLevel = 0
         run, "C:\Program Files\Sublime Text 3\sublime_text.exe"
 Return
@@ -52,7 +52,7 @@ Return
 #`:: ; Win + `
     Process, Exist, firefox.exe ; check if firefox is running
     If (errorLevel) ; if process exists, switch to window
-        WinActivate, ahk_class MozillaWindowClass
+        WinActivate, ahk_exe firefox.exe ; ahk_class MozillaWindowClass
     Else ; if process doesn't exist, errorLevel = 0
         run, "C:\Program Files (x86)\Mozilla Firefox\firefox.exe"
 Return
@@ -65,7 +65,7 @@ Return
 #5:: ; Win + 5
     Process, Exist, eclipse.exe ; check if eclipse is running
     If (errorLevel) ; if process exists, switch to window
-        WinActivate, ahk_class SWT_Window0
+        WinActivate, ahk_exe eclipse.exe ; ahk_class SWT_Window0
     Else ; if process doesn't exist, errorLevel = 0
         run, "C:\Program Files (x86)\eclipse\eclipse.exe"
 Return
@@ -74,12 +74,12 @@ Return
 #LAlt::    ; Win + leftAlt
     Process, Exist, "Amazon Music.exe" ; check if amazon music is running
     If (errorLevel) ; if process exists, switch to window
-        WinActivate, ahk_class Amazon Music
+        WinActivate, ahk_exe "Amazon Music.exe" ; ahk_class Amazon Music
     Else ; if process doesn't exist, errorLevel = 0
         run, "C:\Users\Mariana\AppData\Local\Amazon Music\Amazon Music.exe"
 Return
 
-; switch to task manager window if not open, or open
+; switch to task manager window if open, or start process if not
 #Esc::
     Send, ^+{Esc}
 Return
@@ -88,18 +88,17 @@ Return
 #CapsLock::
     Process, Exist, Ssms.exe ; check if running
     If (errorLevel) ; if process exists, switch to window
-        WinActivate, ahk_id 0x5041e
+        WinActivate, ahk_exe Ssms.exe
     Else ; if process doesn't exist, errorLevel = 0
-        run, "C:\Users\Mariana\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Amazon Music.lnk"
+        run, "C:\Program Files (x86)\Microsoft SQL Server\140\Tools\Binn\ManagementStudio\Ssms.exe
 Return
 
 ;; <<<<<<<< cycle through windows of same class >>>>>>>>
-^`:: ; Ctrl + ` : next window
+^`:: ; Ctrl + ` : switch between windows of the same class
 WinGetClass, CurrentActive, A
 WinGet, Instances, Count, ahk_class %CurrentActive%
 If Instances > 1
-    WinSet, Bottom,, A
-WinActivate, ahk_class %CurrentActive%
+    WinActivateBottom, ahk_class %CurrentActive%
 return
 
 #PgDn:: ; Wing + PgDn : next window
