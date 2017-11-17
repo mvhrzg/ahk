@@ -1,6 +1,6 @@
 #Include, %A_ScriptDir%\helpers.ahk
-#Include, %A_ScriptDir%\eclipse.ahk
-#Include, %A_ScriptDir%\eclipseHelper.ahk
+; #Include, %A_ScriptDir%\eclipse.ahk
+; #Include, %A_ScriptDir%\eclipseHelper.ahk
 SendMode, Input
 #SingleInstance, force
 
@@ -56,20 +56,6 @@ Return
     Else ; if process doesn't exist, errorLevel = 0
         run, "C:\Program Files (x86)\Mozilla Firefox\firefox.exe"
 Return
-
-#q::    ; Win + q to switch to eclipse
-    Goto, #5
-Return
-
-;; switch to open eclipse tab if open. otherwise, open eclipse
-#5:: ; Win + 5
-    Process, Exist, eclipse.exe ; check if eclipse is running
-    If (errorLevel) ; if process exists, switch to window
-        WinActivate, ahk_exe eclipse.exe ; ahk_class SWT_Window0
-    Else ; if process doesn't exist, errorLevel = 0
-        run, "C:\Program Files (x86)\eclipse\eclipse.exe"
-Return
-
 ;; switch to open amazon music window
 #LAlt::    ; Win + leftAlt
     Process, Exist, "Amazon Music.exe" ; check if amazon music is running
@@ -82,15 +68,6 @@ Return
 ; switch to task manager window if open, or start process if not
 #Esc::
     Send, ^+{Esc}
-Return
-
-;; switch to SSMS
-#CapsLock::
-    Process, Exist, Ssms.exe ; check if running
-    If (errorLevel) ; if process exists, switch to window
-        WinActivate, ahk_exe Ssms.exe
-    Else ; if process doesn't exist, errorLevel = 0
-        run, "C:\Program Files (x86)\Microsoft SQL Server\140\Tools\Binn\ManagementStudio\Ssms.exe
 Return
 
 ;; <<<<<<<< cycle through windows of same class >>>>>>>>
