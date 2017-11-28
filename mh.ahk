@@ -26,19 +26,32 @@ Return
 
 ; ----------------------------------------------------------------------------
 /*
+* Google search highlighted Text
+*/
+
+MButton::
+    textToSearch := "!g " ; !g reset variable
+    storeClipboard(false)
+    copy()
+    textToSearch .= Clipboard
+    assignClipboard(false, textToSearch)
+    WinActivate, ahk_exe firefox.exe
+    Send, ^t        ; open new tab
+    sleep(150)      ; wait for new tab
+    paste()
+    sleep(150)
+    Send, {Enter}
+    restoreClipboard(false)
+Return
+
+; [end Google search]
+
+
+; ----------------------------------------------------------------------------
+/*
 * Taskbar hotkeys
 */
 ; ----------------------------------------------------------------------------
-;; switch to open hipchat tab if open. otherwise, open hipchat
-#h:: ; Win + h
-    SetTitleMatchMode, 2    ; open a window if its class contains Sublime Text
-    Process, Exist, HipChat.exe ; check if sublime is running
-    If (errorLevel) ; if process exists, switch to window
-        WinActivate, HipChat
-    Else ; if process doesn't exist, errorLevel = 0
-        run, "C:\ProgramData\Microsoft\Windows\Start Menu\Programs\HipChat\HipChat.lnk"
-Return
-
 ;; switch to open sublime tab if open. otherwise, open sublime
 #s:: ; Win + s
     Process, Exist, sublime_text.exe ; check if sublime is running
@@ -54,7 +67,7 @@ Return
     If (errorLevel) ; if process exists, switch to window
         WinActivate, ahk_exe firefox.exe ; ahk_class MozillaWindowClass
     Else ; if process doesn't exist, errorLevel = 0
-        run, "C:\Program Files (x86)\Mozilla Firefox\firefox.exe"
+        run, "C:\Program Files\Firefox Developer Edition\firefox.exe"
 Return
 ;; switch to open amazon music window
 #LAlt::    ; Win + leftAlt
@@ -62,7 +75,7 @@ Return
     If (errorLevel) ; if process exists, switch to window
         WinActivate, ahk_exe "Amazon Music.exe" ; ahk_class Amazon Music
     Else ; if process doesn't exist, errorLevel = 0
-        run, "C:\Users\Mariana\AppData\Local\Amazon Music\Amazon Music.exe"
+        run, "C:\Users\mvher\AppData\Local\Amazon Music\Amazon Music.exe"
 Return
 
 ; switch to task manager window if open, or start process if not
@@ -71,7 +84,7 @@ Return
 Return
 
 ;; <<<<<<<< cycle through windows of same class >>>>>>>>
-^`:: ; Ctrl + ` : switch between windows of the same class
+#Tab:: ; Win + Tab : switch between windows of the same class
 WinGetClass, CurrentActive, A
 WinGet, Instances, Count, ahk_class %CurrentActive%
 If Instances > 1

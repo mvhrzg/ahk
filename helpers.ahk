@@ -20,8 +20,6 @@ copy(){
 paste(){
     Send, ^v
     ClipWait, 0, 1
-    ; Send, {LControl Down}{v Down}
-    ; Send, {v Up}{LControl Up}
 }
 
 cut(){
