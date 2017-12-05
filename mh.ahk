@@ -84,7 +84,7 @@ Return
 Return
 
 ;; <<<<<<<< cycle through windows of same class >>>>>>>>
-#Tab:: ; Win + Tab : switch between windows of the same class
+#+Tab:: ; Win + Shift + Tab : switch between windows of the same class
 WinGetClass, CurrentActive, A
 WinGet, Instances, Count, ahk_class %CurrentActive%
 If Instances > 1
