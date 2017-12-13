@@ -1,5 +1,5 @@
 
-cd "C:\Users\mvher\OneDrive\Documents\Repositories"
+cd "C:\Users\mvher\Documents\Repositories"
 
 gcl() {
 	git clone "$1"
@@ -46,7 +46,7 @@ gd() {
 }
 
 ahk() {
-	cd "C:\Users\mvher\OneDrive\Documents\Repositories\ahk"
+	cd "C:\Users\mvher\Documents\Repositories\ahk"
 	git pull
 }
 
