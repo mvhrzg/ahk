@@ -1,4 +1,4 @@
-#Include, %A_ScriptDir%\mh.ahk
+#Include, %A_ScriptDir%\main.ahk
 SendMode, Input
 #SingleInstance, force
 ;; [start] Globals
