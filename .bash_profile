@@ -1,0 +1,1 @@
+. ~/Documents/Repositories/ahk/.bashrc
