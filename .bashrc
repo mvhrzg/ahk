@@ -102,7 +102,7 @@ gpl() {
 
 #add all tracked and commit with message flag (one commit message)
 gca() {
-  git commit -a -m 
+  git commit -a -m "$1"
 }
 
 gsh() {
@@ -124,13 +124,17 @@ gdb() {
 
 ahk() {
 	cd $HOME/Documents/Repositories/ahk
-	git pull
+	gst
+	gpl
 }
 
 hr() {
 	cd $HOME/Documents/Repositories/hackerrank
-	git pull
+	gst
+	gpl
 }
+
+
 
 rupd() {
 	HOMEDIR=$HOME"/Documents/Repositories"
