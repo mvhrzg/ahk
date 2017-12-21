@@ -1,1 +1,1 @@
-. ~/Documents/Repositories/ahk/.bashrc
+. $HOME/Documents/Repositories/ahk/.bashrc

@@ -131,3 +131,17 @@ hr() {
 	cd $HOME/Documents/Repositories/hackerrank
 	git pull
 }
+
+rupd() {
+	HOMEDIR=$HOME"/Documents/Repositories"
+	DIRS=`ls -l $HOMEDIR | egrep '^d' | awk '{print $9}'`
+	for DIR in $DIRS
+	do
+		echo "~/Documents/Repositories/${DIR%?}"
+		cd ${HOMEDIR}/${DIR}
+		gst
+		echo "Pulling..."
+		gpl
+		cd ..
+	done
+}
