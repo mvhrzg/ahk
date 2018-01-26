@@ -192,20 +192,23 @@ return
     cut()
     storeClipboard(false)
 
+    ; ask what character(s) to replace. handles character conversion if input is numeric
     Gosub, replaceWhatMsg
 
+    ; if routine not cancelled, ask with what character to replace the previous input. handles conversion
     If (continue) {
         Gosub, replaceWithMsg
     }
 
+    ; if routine not cancelled, replace every occurrence of replaceWhat with replaceWith
     If (continue) {
         newClip := StrReplace(Clipboard, replaceWhat, replaceWith)
     }
 
-    assignClipboard(false, newClip)
-    paste()
-    sleep(250)
-    restoreClipboard(false)
+    assignClipboard(false, newClip)     ; replace previous clip with replaced characters
+    paste()                             ; paste new clip
+    sleep(250)                          ; wait
+    restoreClipboard(false)             ; restore clip to previous
 return
 
 ; [end Text]
