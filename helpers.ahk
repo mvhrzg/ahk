@@ -195,30 +195,30 @@ isLower(c) {
     return (c >= "a") && (c <= "z")
 }
 
-
-
-
 /*
-* Helpers to replace characters
+* Helpers to replace characters (hotkey: ^!q)
 */
 ; ----------------------------------------------------------------------------
+; asks user for input on which character to look for
 replaceWhatMsg:
     continue := false
     InputBox, replaceWhat,, Replace this:
-    if (ErrorLevel) {
+    
+    if (ErrorLevel) { ; if cancelled
         Goto, cancel
     } else {
-        if replaceWhat Is Number
+        if replaceWhat Is Number            ; if input is numeric
         {
-            Gosub, whatConvert
+            Gosub, whatConvert              ; convert it to alpha
         } else {
-            Gosub, replaceWhatMsgLiteral
+            Gosub, replaceWhatMsgLiteral    ; otherwise, leave as is
         }
     }
 Return
 
+; handles character conversion of character to replace
 whatConvert:
-    SetTimer, ChangeButtonNames, 50 
+    SetTimer, LiteralConversionButtons, 50 
     MsgBox, 4, Literal or Conversion, Is this a literal number or a character conversion?
     IfMsgBox, Yes                   ; literal
         Gosub, replaceWhatMsgLiteral
@@ -226,6 +226,7 @@ whatConvert:
         Gosub, replaceWhatMsgConvert
 Return
 
+; confirms literal input of character to replace is correct 
 replaceWhatMsgLiteral:
     MsgBox, 3,,  Replace `"%replaceWhat%`". Is this correct?
     IfMsgBox, Yes
@@ -234,6 +235,7 @@ replaceWhatMsgLiteral:
         Gosub, replaceWhatMsg
 Return
 
+; confirms converted input of character to replace is correct
 replaceWhatMsgConvert:
     replaceWhat := Chr(replaceWhat)
     MsgBox, 3,,  Replace `"%replaceWhat%`". Is this correct?
@@ -243,23 +245,25 @@ replaceWhatMsgConvert:
         Gosub, replaceWhatMsg
 Return
 
+; asks user for input on which character to replace with
 replaceWithMsg:
     continue := false
     InputBox, replaceWith,, Replace `"%replaceWhat%`" with:
-    if (ErrorLevel) {
+    if (ErrorLevel) {   ; if cancelled
         Goto, cancel
     } else {
-        if replaceWith Is Number
+        if replaceWith Is Number            ; if input is numeric
         {
-            Gosub, withConvert
+            Gosub, withConvert              ; convert to alpha
         } else {
-            Gosub, replaceWithMsgLiteral
+            Gosub, replaceWithMsgLiteral    ; literal input
         }
     }
 Return
 
+; handles new character conversion
 withConvert:
-    SetTimer, ChangeButtonNames, 50 
+    SetTimer, LiteralConversionButtons, 50
     MsgBox, 4, Literal or Conversion, Is this a literal number or a character conversion?
     IfMsgBox, Yes                   ; literal
         Gosub, replaceWithMsgLiteral
@@ -268,6 +272,7 @@ withConvert:
 
 Return
 
+; confirms literal new character input
 replaceWithMsgLiteral:
     MsgBox, 3,,  Replace `"%replaceWhat%`" with `"%replaceWith%`". Is this correct?
     IfMsgBox, Yes
@@ -276,6 +281,7 @@ replaceWithMsgLiteral:
         Gosub, replaceWithMsg
 Return
 
+; confirms converted new character input
 replaceWithMsgConvert:
     replaceWith := Chr(replaceWith)
     MsgBox, 3,,  Replace `"%replaceWhat%`" with `"%replaceWith%`". Is this correct?
@@ -285,10 +291,10 @@ replaceWithMsgConvert:
         Gosub, replaceWithMsg
 Return
 
+; cancel routine
 cancel:
-    MsgBox, inside cancel. Stored = %StoredClip%
-    restoreClipboard(false)
-    paste()
+    restoreClipboard(false)     ; restore clipboard to initial state
+    paste()                     ; paste it
 Return
 
 /*
@@ -296,10 +302,10 @@ Return
 */
 ; ----------------------------------------------------------------------------
 
-ChangeButtonNames: 
+LiteralConversionButtons: 
     IfWinNotExist, Literal or Conversion
         return  ; Keep waiting.
-    SetTimer, ChangeButtonNames, off 
+    SetTimer, LiteralConversionButtons, off 
     WinActivate 
     ControlSetText, Button1, &Literal
     ControlSetText, Button2, &Conversion 
