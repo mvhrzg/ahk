@@ -82,7 +82,7 @@ gst() {
 
 #add
 ga() {
-  git add 
+  git add "$1"
 }
 
 #add all tracked
@@ -97,7 +97,7 @@ gco() {
 
 #pull
 gpl() {
-  git pull 
+  git pull
 }
 
 #add all tracked and commit with message flag (one commit message)
