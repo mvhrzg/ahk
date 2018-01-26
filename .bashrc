@@ -67,12 +67,12 @@ gps() {
 
 #git checkout
 gck() {
-  git checkout
+  git checkout  "$1"
 }
 
 #make new branch
 gckb() {
-  git checkout -b
+  git checkout -b "$1"
 }
 
 #git status
