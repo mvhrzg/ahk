@@ -78,13 +78,13 @@ countCharacters(){
     }
 Return
 
-; replaces selected text with string os ascii numbers for each character
+; replaces selected text with string of ascii numbers for each character
 ::-ascii::  ; auto-complete -ascii
 toAscii := getText(true)
 Loop % StrLen(toAscii) {
     character := SubStr(toAscii, A_Index, 1)
     number := Asc(character)
-    Send, %number%{Space}
+    Send, %character%{Space}%number%{Space}
 }
 Return
 
@@ -194,3 +194,114 @@ isLower(c) {
     ; StringCaseSense, On
     return (c >= "a") && (c <= "z")
 }
+
+
+
+
+/*
+* Helpers to replace characters
+*/
+; ----------------------------------------------------------------------------
+replaceWhatMsg:
+    continue := false
+    InputBox, replaceWhat,, Replace this:
+    if (ErrorLevel) {
+        Goto, cancel
+    } else {
+        if replaceWhat Is Number
+        {
+            Gosub, whatConvert
+        } else {
+            Gosub, replaceWhatMsgLiteral
+        }
+    }
+Return
+
+whatConvert:
+    SetTimer, ChangeButtonNames, 50 
+    MsgBox, 4, Literal or Conversion, Is this a literal number or a character conversion?
+    IfMsgBox, Yes                   ; literal
+        Gosub, replaceWhatMsgLiteral
+    Else IfMsgBox, No               ; conversion
+        Gosub, replaceWhatMsgConvert
+Return
+
+replaceWhatMsgLiteral:
+    MsgBox, 3,,  Replace `"%replaceWhat%`". Is this correct?
+    IfMsgBox, Yes
+        continue := true
+    Else IfMsgBox, No
+        Gosub, replaceWhatMsg
+Return
+
+replaceWhatMsgConvert:
+    replaceWhat := Chr(replaceWhat)
+    MsgBox, 3,,  Replace `"%replaceWhat%`". Is this correct?
+    IfMsgBox, Yes
+        continue := true
+    Else IfMsgBox, No
+        Gosub, replaceWhatMsg
+Return
+
+replaceWithMsg:
+    continue := false
+    InputBox, replaceWith,, Replace `"%replaceWhat%`" with:
+    if (ErrorLevel) {
+        Goto, cancel
+    } else {
+        if replaceWith Is Number
+        {
+            Gosub, withConvert
+        } else {
+            Gosub, replaceWithMsgLiteral
+        }
+    }
+Return
+
+withConvert:
+    SetTimer, ChangeButtonNames, 50 
+    MsgBox, 4, Literal or Conversion, Is this a literal number or a character conversion?
+    IfMsgBox, Yes                   ; literal
+        Gosub, replaceWithMsgLiteral
+    Else IfMsgBox, No               ; conversion
+        Gosub, replaceWithMsgConvert
+
+Return
+
+replaceWithMsgLiteral:
+    MsgBox, 3,,  Replace `"%replaceWhat%`" with `"%replaceWith%`". Is this correct?
+    IfMsgBox, Yes
+        continue := true
+    Else IfMsgBox, No
+        Gosub, replaceWithMsg
+Return
+
+replaceWithMsgConvert:
+    replaceWith := Chr(replaceWith)
+    MsgBox, 3,,  Replace `"%replaceWhat%`" with `"%replaceWith%`". Is this correct?
+    IfMsgBox, Yes
+        continue := true
+    Else IfMsgBox, No
+        Gosub, replaceWithMsg
+Return
+
+cancel:
+    MsgBox, inside cancel. Stored = %StoredClip%
+    restoreClipboard(false)
+    paste()
+Return
+
+/*
+* Helper to change MsgBox buttons
+*/
+; ----------------------------------------------------------------------------
+
+ChangeButtonNames: 
+    IfWinNotExist, Literal or Conversion
+        return  ; Keep waiting.
+    SetTimer, ChangeButtonNames, off 
+    WinActivate 
+    ControlSetText, Button1, &Literal
+    ControlSetText, Button2, &Conversion 
+return
+; ----------------------------------------------------------------------------
