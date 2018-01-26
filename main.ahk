@@ -138,9 +138,9 @@ Return
 Return
 
 ; inverts case of selected text
-!x::    ; Alt + x
+^!x::    ; Ctrl + Alt + x
     invertedClip = ;
-    storeClipboard(false)    ; store previous clipboard and clear it
+    storeClipboard(false)   ; store previous clipboard and clear it
     cut()                   ; cut selected text
 
     Loop, Parse, Clipboard
@@ -162,6 +162,19 @@ Return
     restoreClipboard(true)  ; clear clipboard and restore to previous
 return
 
+; pascal case selected Text
+^!p::   ; Ctrl + Alt + p
+    pascalClip = ;
+    storeClipboard(false)   ; store previous clipboard and clear it
+    cut()                   ; cut selected text
+
+    StringUpper, pascalClip, Clipboard, T   ; title/pascal case the clipboard
+    assignClipboard(true, pascalClip)       ; clear clipboard, then assign to pascalClip
+    paste()
+    sleep(250)
+    restoreClipboard(true)                  ; clear clipboard and restore to previous
+return
+
 ; paste and replace clipboard contents with currently selected text
 ^+v::   ; Ctrl + Shift + v
     storeClipboard(false)               ; stores clip without clearing after
@@ -172,5 +185,28 @@ return
     sleep(250)                          ; this has to be here. any less, clip is empty at this point
     assignClipboard(false, tempClip)    ; replace initial clip with latest selection (tempClip)
 return
+
+; replace a character with another
+^!q::   ; Ctrl + Alt + q
+    continue := false, newClip = ;
+    cut()
+    storeClipboard(false)
+
+    Gosub, replaceWhatMsg
+
+    If (continue) {
+        Gosub, replaceWithMsg
+    }
+
+    If (continue) {
+        newClip := StrReplace(Clipboard, replaceWhat, replaceWith)
+    }
+
+    assignClipboard(false, newClip)
+    paste()
+    sleep(250)
+    restoreClipboard(false)
+return
+
 ; [end Text]
 ; ----------------------------------------------------------------------------
