@@ -122,6 +122,17 @@ Return
     Send, {!}g{Space}AutoHotKey{Space}
 Return
 #IfWinNotActive
+
+#IfWinActive, ahk_class mintty
+;; open new terminal window
+^n: ; Ctrl + n
+    Msgbox, you pressed ctrl+n
+    Run, "C:\Program Files\Git\git-bash.exe"
+
+Return
+#IfWinActive
+
+
 ; [end MING64]
 ; ----------------------------------------------------------------------------
 
@@ -186,7 +197,8 @@ return
     assignClipboard(false, tempClip)    ; replace initial clip with latest selection (tempClip)
 return
 
-; replace a character with another
+; replace one character with another
+; TODO: expand replaceWhat selection to multiple
 ^!q::   ; Ctrl + Alt + q
     continue := false, newClip = ;
     cut()

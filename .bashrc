@@ -1,7 +1,7 @@
 declare -x SSH_ENV="$HOME/.ssh/environment"
 
 #starts git bash in $HOME/Documents/Repositories, where all git repos are stored
-start_repos() {
+repos() {
   cd $HOME/Documents/Repositories;
 }
 
@@ -17,13 +17,13 @@ function start_agent {
 }
 
 if [ -f "${SSH_ENV}" ]; then
-   start_repos;
+   repos;
    . "${SSH_ENV}" > /dev/null
    ps -ef | grep ${SSH_AGENT_PID} | grep ssh-agent$ > /dev/null || {
        start_agent;
    }
 else
-    start_repos;
+    repos;
     start_agent;
 fi
 
