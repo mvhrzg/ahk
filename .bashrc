@@ -60,6 +60,11 @@ gpf() {
   git push --set-upstream origin "$(git branch | grep \* | cut -d ' ' -f2)"
 }
 
+#git push for first time
+gp() {
+  git push --set-upstream origin "$(git branch | grep \* | cut -d ' ' -f2)"
+}
+
 #git push (after first)
 gps() {
   git push
