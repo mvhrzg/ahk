@@ -34,11 +34,7 @@ Return
 ::-p::	; auto-complete -p
 	Send, python
 Return
-;; open new terminal window
-^n: ; Ctrl + n
-    Msgbox, you pressed ctrl+n
-    Run, "C:\Program Files\Git\git-bash.exe"
-Return
+
 #IfWinActive
 
 
