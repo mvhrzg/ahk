@@ -1,6 +1,6 @@
 #Include, %A_ScriptDir%\helpers.ahk
-; #Include, %A_ScriptDir%\eclipse.ahk
-; #Include, %A_ScriptDir%\eclipseHelper.ahk
+#Include, %A_ScriptDir%\mintty.ahk
+
 SendMode, Input
 #SingleInstance, force
 
@@ -106,35 +106,6 @@ return
 ; [end Taskbar]
 ; ----------------------------------------------------------------------------
 
-
-; ----------------------------------------------------------------------------
-/*
-* MINGW64 terminal
-*/
-; ----------------------------------------------------------------------------
-#IfWinNotActive, ahk_class mintty
-;; print AutoHotKey
-::ahk::   ; auto-complete ahk
-    Send, AutoHotKey{Space}  ; Return AutoHotKey
-Return
-
-::gahk::
-    Send, {!}g{Space}AutoHotKey{Space}
-Return
-#IfWinNotActive
-
-#IfWinActive, ahk_class mintty
-;; open new terminal window
-^n: ; Ctrl + n
-    Msgbox, you pressed ctrl+n
-    Run, "C:\Program Files\Git\git-bash.exe"
-
-Return
-#IfWinActive
-
-
-; [end MING64]
-; ----------------------------------------------------------------------------
 
 ; ----------------------------------------------------------------------------
 /*
