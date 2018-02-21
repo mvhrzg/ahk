@@ -1,7 +1,8 @@
+#!/bin/bash
+
 . ~/Documents/Repositories/ahk/.bashrc
 
-cd  ~/Documents/Repositories;
-
+cd $HOME/Documents/Repositories;
 # ----------------------------------------------------------------------------
 
 #checkout master
@@ -9,7 +10,7 @@ gckm() {
   git checkout master 
 }
 
-#git clone - NOT WORKING: have to parse $1
+#git clone
 gcl() {
 	git clone "$1"
 }

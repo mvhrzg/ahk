@@ -31,7 +31,7 @@ Return
 #IfWinActive, ahk_class mintty
 	MsgBox, mintty open
 ; insert 'python' string
-::-p::	; auto-complete -p
+::-py::	; auto-complete -p
 	Send, python
 Return
 

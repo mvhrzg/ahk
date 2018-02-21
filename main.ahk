@@ -5,10 +5,11 @@ SendMode, Input
 #SingleInstance, force
 
 ; ----------------------------------------------------------------------------
-#IfWinNotActive, ahk_class mintty
-!f1:: WinMaximize A ; Alt + F1 - maximize current window
-!f2:: WinMinimize A ; Alt + F2 - minimize current window
-#IfWinNotActive
+; #IfWinNotActive, ahk_class mintty
+!x:: WinMaximize A ; Alt + x - maximize current window
+!z:: WinMinimize A ; Alt + F2 - minimize current window
+^#x:: WinClose, A  ; Alt + Win + x - close current window
+; #IfWinNotActive
 
 ; append lines to clipboard
 ^+c:: ; Ctrl + Shift + c

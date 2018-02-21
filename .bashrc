@@ -1,3 +1,5 @@
+#!/bin/bash
+
 declare -x SSH_ENV="$HOME/.ssh/environment"
 
 # start the ssh-agent
@@ -19,6 +21,7 @@ if [ -f "${SSH_ENV}" ]; then
 else
     start_agent;
 fi
+
 
 if [ -f /etc/bash_completion ] && ! shopt -oq posix; then
     . /etc/bash_completion                                                                                                                                                                
