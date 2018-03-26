@@ -3,6 +3,7 @@ SendMode, Input
 #SingleInstance, force
 ;; [start] Globals
 global StoredClip = ; global Clipboard variable
+global leftMouse := False
 ;; [end] Globals
 
 /*
@@ -296,6 +297,33 @@ cancel:
     restoreClipboard(false)     ; restore clipboard to initial state
     paste()                     ; paste it
 Return
+
+/*
+* Mouse helpers
+*/
+; ----------------------------------------------------------------------------
+swapMouseButtons(swap=0) {
+    If (swap = 0)   ; 0 = reset to right-handed
+        threeSecondText("   Right-handed mouse")
+    Else If (swap = 1)
+        threeSecondText("   Left-handed mouse")
+
+    Return DllCall("SwapMouseButton", "Int", swap)
+}
+
+threeSecondText(text){
+    Gui, +AlwaysOnTop +ToolWindow -SysMenu -Caption
+    Gui, Color, ffffff ; changes background color
+    Gui, Font, 000000 s20 wbold, Verdana ; changes font color, size and font
+    Gui, Add, Text, x0 y0, %text% ; the text to display
+    Gui, Show, NoActivate, Xn: 0, Yn: 0
+
+    sleep(3000)
+    Gui, Destroy
+}
+; ----------------------------------------------------------------------------
+; [end] Mouse helpers
+; ----------------------------------------------------------------------------
 
 /*
 * Helper to change MsgBox buttons
