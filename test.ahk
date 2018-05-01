@@ -1,5 +1,5 @@
 #SingleInstance force
-; #Include, %A_ScriptDir%\mh.ahk
+; #Include, %A_ScriptDir%\main.ahk
 
 ;; paste MAKEs as REMOVEs
 ^+r::   ; Ctrl + Shift + r

@@ -1,8 +1,9 @@
-#Include, %A_ScriptDir%\mh.ahk
+#Include, %A_ScriptDir%\main.ahk
 SendMode, Input
 #SingleInstance, force
 ;; [start] Globals
 global StoredClip = ; global Clipboard variable
+global leftMouse := False
 ;; [end] Globals
 
 /*
@@ -20,8 +21,6 @@ copy(){
 paste(){
     Send, ^v
     ClipWait, 0, 1
-    ; Send, {LControl Down}{v Down}
-    ; Send, {v Up}{LControl Up}
 }
 
 cut(){
@@ -80,13 +79,13 @@ countCharacters(){
     }
 Return
 
-; replaces selected text with string os ascii numbers for each character
+; replaces selected text with string of ascii numbers for each character
 ::-ascii::  ; auto-complete -ascii
 toAscii := getText(true)
 Loop % StrLen(toAscii) {
     character := SubStr(toAscii, A_Index, 1)
     number := Asc(character)
-    Send, %number%{Space}
+    Send, %character%{Space}%number%{Space}
 }
 Return
 
@@ -196,3 +195,147 @@ isLower(c) {
     ; StringCaseSense, On
     return (c >= "a") && (c <= "z")
 }
+
+/*
+* Helpers to replace characters (hotkey: ^!q)
+*/
+; ----------------------------------------------------------------------------
+; asks user for input on which character to look for
+replaceWhatMsg:
+    continue := false
+    InputBox, replaceWhat,, Replace this:
+    
+    if (ErrorLevel) { ; if cancelled
+        Goto, cancel
+    } else {
+        if replaceWhat Is Number            ; if input is numeric
+        {
+            Gosub, whatConvert              ; convert it to alpha
+        } else {
+            Gosub, replaceWhatMsgLiteral    ; otherwise, leave as is
+        }
+    }
+Return
+
+; handles character conversion of character to replace
+whatConvert:
+    SetTimer, LiteralConversionButtons, 50 
+    MsgBox, 4, Literal or Conversion, Is this a literal number or a character conversion?
+    IfMsgBox, Yes                   ; literal
+        Gosub, replaceWhatMsgLiteral
+    Else IfMsgBox, No               ; conversion
+        Gosub, replaceWhatMsgConvert
+Return
+
+; confirms literal input of character to replace is correct 
+replaceWhatMsgLiteral:
+    MsgBox, 3,,  Replace `"%replaceWhat%`". Is this correct?
+    IfMsgBox, Yes
+        continue := true
+    Else IfMsgBox, No
+        Gosub, replaceWhatMsg
+Return
+
+; confirms converted input of character to replace is correct
+replaceWhatMsgConvert:
+    replaceWhat := Chr(replaceWhat)
+    MsgBox, 3,,  Replace `"%replaceWhat%`". Is this correct?
+    IfMsgBox, Yes
+        continue := true
+    Else IfMsgBox, No
+        Gosub, replaceWhatMsg
+Return
+
+; asks user for input on which character to replace with
+replaceWithMsg:
+    continue := false
+    InputBox, replaceWith,, Replace `"%replaceWhat%`" with:
+    if (ErrorLevel) {   ; if cancelled
+        Goto, cancel
+    } else {
+        if replaceWith Is Number            ; if input is numeric
+        {
+            Gosub, withConvert              ; convert to alpha
+        } else {
+            Gosub, replaceWithMsgLiteral    ; literal input
+        }
+    }
+Return
+
+; handles new character conversion
+withConvert:
+    SetTimer, LiteralConversionButtons, 50
+    MsgBox, 4, Literal or Conversion, Is this a literal number or a character conversion?
+    IfMsgBox, Yes                   ; literal
+        Gosub, replaceWithMsgLiteral
+    Else IfMsgBox, No               ; conversion
+        Gosub, replaceWithMsgConvert
+
+Return
+
+; confirms literal new character input
+replaceWithMsgLiteral:
+    MsgBox, 3,,  Replace `"%replaceWhat%`" with `"%replaceWith%`". Is this correct?
+    IfMsgBox, Yes
+        continue := true
+    Else IfMsgBox, No
+        Gosub, replaceWithMsg
+Return
+
+; confirms converted new character input
+replaceWithMsgConvert:
+    replaceWith := Chr(replaceWith)
+    MsgBox, 3,,  Replace `"%replaceWhat%`" with `"%replaceWith%`". Is this correct?
+    IfMsgBox, Yes
+        continue := true
+    Else IfMsgBox, No
+        Gosub, replaceWithMsg
+Return
+
+; cancel routine
+cancel:
+    restoreClipboard(false)     ; restore clipboard to initial state
+    paste()                     ; paste it
+Return
+
+/*
+* Mouse helpers
+*/
+; ----------------------------------------------------------------------------
+swapMouseButtons(swap=0) {
+    If (swap = 0)   ; 0 = reset to right-handed
+        threeSecondText("   Right-handed mouse")
+    Else If (swap = 1)
+        threeSecondText("   Left-handed mouse")
+
+    Return DllCall("SwapMouseButton", "Int", swap)
+}
+
+threeSecondText(text){
+    Gui, +AlwaysOnTop +ToolWindow -SysMenu -Caption
+    Gui, Color, ffffff ; changes background color
+    Gui, Font, 000000 s20 wbold, Verdana ; changes font color, size and font
+    Gui, Add, Text, x0 y0, %text% ; the text to display
+    Gui, Show, NoActivate, Xn: 0, Yn: 0
+
+    sleep(3000)
+    Gui, Destroy
+}
+; ----------------------------------------------------------------------------
+; [end] Mouse helpers
+; ----------------------------------------------------------------------------
+
+/*
+* Helper to change MsgBox buttons
+*/
+; ----------------------------------------------------------------------------
+
+LiteralConversionButtons: 
+    IfWinNotExist, Literal or Conversion
+        return  ; Keep waiting.
+    SetTimer, LiteralConversionButtons, off 
+    WinActivate 
+    ControlSetText, Button1, &Literal
+    ControlSetText, Button2, &Conversion 
+return
+; ----------------------------------------------------------------------------
