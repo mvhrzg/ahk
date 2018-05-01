@@ -29,14 +29,14 @@ Return
 * Taskbar hotkeys
 */
 ; ----------------------------------------------------------------------------
-;; switch to open hipchat tab if open. otherwise, open hipchat
-#h:: ; Win + h
-    SetTitleMatchMode, 2    ; open a window if its class contains Sublime Text
-    Process, Exist, HipChat.exe ; check if sublime is running
+;; switch to open stride tab if open. otherwise, open hipchat
+#r:: ; Win + r
+    SetTitleMatchMode, 2    ; open a window if its class contains stride
+    Process, Exist, Stride.exe ; check if stride is running
     If (errorLevel) ; if process exists, switch to window
-        WinActivate, HipChat
+        WinActivate, Stride
     Else ; if process doesn't exist, errorLevel = 0
-        run, "C:\ProgramData\Microsoft\Windows\Start Menu\Programs\HipChat\HipChat.lnk"
+        run, "C:\Users\Mariana\AppData\Local\Stride\app-1.17.82\Stride.exe"
 Return
 
 ;; switch to open sublime tab if open. otherwise, open sublime
@@ -55,13 +55,10 @@ Return
         WinActivate, ahk_exe firefox.exe ; ahk_class MozillaWindowClass
     Else ; if process doesn't exist, errorLevel = 0
         run, "C:\Program Files\Firefox Developer Edition\firefox.exe"
-
-#q::    ; Win + q to switch to eclipse
-    Goto, #5
 Return
 
 ;; switch to open eclipse tab if open. otherwise, open eclipse
-#5:: ; Win + 5
+#q::    ; Win + q to switch to eclipse
     Process, Exist, eclipse.exe ; check if eclipse is running
     If (errorLevel) ; if process exists, switch to window
         WinActivate, ahk_exe eclipse.exe ; ahk_class SWT_Window0
@@ -84,7 +81,7 @@ Return
 Return
 
 ;; switch to SSMS
-#CapsLock::
+#w::    ; Win +  w
     Process, Exist, Ssms.exe ; check if running
     If (errorLevel) ; if process exists, switch to window
         WinActivate, ahk_exe Ssms.exe
