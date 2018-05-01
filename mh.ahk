@@ -54,8 +54,7 @@ Return
     If (errorLevel) ; if process exists, switch to window
         WinActivate, ahk_exe firefox.exe ; ahk_class MozillaWindowClass
     Else ; if process doesn't exist, errorLevel = 0
-        run, "C:\Program Files (x86)\Mozilla Firefox\firefox.exe"
-Return
+        run, "C:\Program Files\Firefox Developer Edition\firefox.exe"
 
 #q::    ; Win + q to switch to eclipse
     Goto, #5
