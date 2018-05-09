@@ -60,11 +60,11 @@ _buildTestBlock(testName){
     testBlock .= "  # setup`r`n`r`n"
     testBlock .= "  # pre-condition`r`n`r`n"
     testBlock .= "  # action`r`n`r`n"
-    testBlock .= "  # assertion`r`n`r`n"
+    testBlock .= "  # assertion`r`n`"
     testBlock = %testBlock%  Call CHECK_EQUAL(1, 0, "not implemented") From XX1S_QLF
     testBlock .="`r`n`r`n"
     testBlock .= "  # cleanup`r`n`r`n"
-    testBlock .= "End`r`n`r`n"
+    testBlock .= "End"
 
     return testBlock
 }

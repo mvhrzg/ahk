@@ -8,6 +8,12 @@ SendMode, Input
 SetTimer, ^b, 6000
 Return
 
+^!1:: Send, XX1B ; print XX1B - Ctrl + Alt + 1
+^!2:: Send, XX1S_ ; print XX1S_ - Ctrl + Alt + 2
+^!3:: Send, XX3F ; print XX3F - Ctrl + Alt + 3
+^!c:: Send, CRETE- ; Ctrl + Alt + c - print CRETE-
+; ----------------------------------------------------------------------------
+
 ;; print QLF outside of eclipse
 ^!q::   ; Ctrl + Alt + q
 Input, contents,,{Enter},,                          ; start with 1, 2, 3; enter abbreviation; press Enter
@@ -26,18 +32,35 @@ Return
 #ifWinActive ahk_class SWT_Window0
 ;; CREATE
 ::-c::    ; auto-complete -c
+    storeClipboard(false)
     lineText := getText(true)
+    lineText := Trim(lineText)
     if(lineText){
         tableCode := % lineText
     }else{
         tableCode = ""
     }
-    Send, Call CREATE("%tableCode%", "",) From XX1S_QLF{Left 17}
+    Clipboard := "  Call CREATE(""" . tableCode . """, """",) From XX1S_QLF"
+    paste()
+    Send, {Left 17}
+    restoreClipboard(false)
 Return
 
 ;; EMBALM
 ::-e::   ; auto-complete -e
-    Send, Call EMBALM("", "") From XX1S_QLF{Left 20}
+    storeClipboard(false)
+    lineText := getText(true)
+    lineText := Trim(lineText)
+    if(lineText){
+        tableCode := % lineText
+    }
+    ; else{
+    ;     tableCode =   ""
+    ; }
+    Clipboard := "  Call EMBALM(""" . tableCode . """, """") From XX1S_QLF"
+    paste()
+    Send, {Left 16}
+    restoreClipboard(false)
 Return
 
 ; variable declarations
@@ -154,13 +177,13 @@ Return
 
 ;; splits current line on cursor and adds &+{Tab}";" at beginning of new line
 ^Enter::    ; Ctrl + Enter
-    newFieldLine = `r`n&+  ";"
+    newFieldLine = `r`n&    ; +  ";"
     storeClipboard(false)
     assignClipboard(false, newFieldLine)
     paste()
     sleep(100)
     restoreClipboard(false)
-    Send, {Left 3}
+    ; Send, {Left 3}
 Return
 
 ;; splits current line on cursor and adds & as first character of new line
@@ -176,12 +199,13 @@ Return
 ;; re-run previous test
 ^r::    ; Ctrl + r
     Send, {F7 Down}{F7 Up}                  ; compile
-    sleep(500)
+    sleep(200)
     Send, {Shift Down}{Alt Down}{q Down}    ; hit view-console shortcut
-    Send, {Shift Up}{Alt Up}{q Up}          ; release view-console shortcut
     sleep(100)
+    Send, {Shift Up}{Alt Up}{q Up}          ; release view-console shortcut
+    sleep(500)
     Send, {c Down}{c Up}                    ; hit and release terminal console key
-    sleep(100)                              ; wait for terminal to open
+    sleep(500)                              ; wait for terminal to open
     Send, {NumpadUp}{Enter}                 ; hit up + enter to run previous
 Return
 
@@ -264,7 +288,7 @@ Return
     }
 Return
 
-;; build instance
+;; build instance. example: 1wp OR 1wp-package
 ^!i::   ; Ctrl + Alt + i
     Input, contents,,{Enter},,
     r_array := _instance(contents)
