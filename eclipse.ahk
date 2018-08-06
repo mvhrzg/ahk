@@ -34,7 +34,6 @@ Return
     textToSurround := Clipboard
     
     Clipboard := prepend . textToSurround . append
-    MsgBox, % "2. clip =" . Clipboard 
 
     paste()
     sleep(250)
