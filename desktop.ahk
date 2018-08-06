@@ -2,6 +2,7 @@
 
 SendMode, Input
 #SingleInstance, force
+#WinActivateForce
 
 ; ----------------------------------------------------------------------------
 /*
@@ -9,13 +10,13 @@ SendMode, Input
 */
 ; ----------------------------------------------------------------------------
 ;; switch to open stride tab if open. otherwise, open hipchat
-#r:: ; Win + r
+#i:: ; Win + i
     SetTitleMatchMode, 2    ; open a window if its class contains stride
     Process, Exist, Stride.exe ; check if stride is running
     If (errorLevel) ; if process exists, switch to window
         WinActivate, Stride
     Else ; if process doesn't exist, errorLevel = 0
-        run, "C:\Users\Mariana\AppData\Local\Stride\app-1.17.82\Stride.exe"
+        run, "C:\Users\Mariana\AppData\Local\Stride\Stride.exe"
 Return
 
 ;; switch to open sublime tab if open. otherwise, open sublime
@@ -31,7 +32,7 @@ Return
 #`:: ; Win + `
     Process, Exist, firefox.exe ; check if firefox is running
     If (errorLevel) ; if process exists, switch to window
-        WinActivate, ahk_exe firefox.exe ; ahk_class MozillaWindowClass
+        WinActivate, ahk_class MozillaWindowClass ; ahk_exe firefox.exe
     Else ; if process doesn't exist, errorLevel = 0
         run, "C:\Program Files\Firefox Developer Edition\firefox.exe"
 Return
@@ -55,7 +56,7 @@ Return
 Return
 
 ; switch to task manager window if open, or start process if not
-#Esc::
+#-::
     Send, ^+{Esc}
 Return
 
@@ -75,6 +76,15 @@ Return
         WinActivate, ahk_exe OUTLOOK.EXE
     Else ; if process doesn't exist, errorLevel = 0
         run, "C:\Program Files (x86)\Microsoft Office\root\Office16\OUTLOOK.EXE"
+Return
+
+;; switch to chrome
+#+`::
+    Process, Exist, chrome.exe ; check if running
+    If (errorLevel) ; if process exists, switch to window
+        WinActivate, ahk_exe chrome.exe
+    Else ; if process doesn't exist, errorLevel = 0
+        run, "C:\Program Files (x86)\Google\Chrome\Application\chrome.exe"
 Return
 
 ;; <<<<<<<< cycle through windows of same class >>>>>>>>

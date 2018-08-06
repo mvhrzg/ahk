@@ -6,15 +6,22 @@
 SendMode, Input
 #SingleInstance, force
 
-!f1:: WinMaximize A ; Alt + F2 - maximize current window
-!f2:: WinMinimize A ; Alt + F2 - minimize current window
+#z:: WinMaximize A ; Alt + F2 - maximize current window
+#x:: WinMinimize A ; Alt + F2 - minimize current window
 
 ;; clears clipboard
-^!BackSpace:: ; Ctrl + Alt + Backspace
+
+!BackSpace:: ; Ctrl + Alt + Backspace
     clearClipboard()    ; clear it
 Return
 ; ----------------------------------------------------------------------------
-
+^!1:: Send, XX1B ; print XX1B - Ctrl + Alt + 1
+^!2:: Send, XX1S_ ; print XX1S_ - Ctrl + Alt + 2
+^!3:: Send, XX3F ; print XX3F - Ctrl + Alt + 3
+^!c:: Send, CRETE- ; Ctrl + Alt + c - print CRETE-
+#IfWinActive, ahk_class mintty
+    ^!c:: Send, CRETE- ; Ctrl + Alt + c - print CRETE-
+#IfWinActive
 ; ----------------------------------------------------------------------------
 /*
 * MINGW64 terminal

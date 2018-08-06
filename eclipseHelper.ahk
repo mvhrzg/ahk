@@ -64,7 +64,7 @@ _buildTestBlock(testName){
     testBlock = %testBlock%  Call CHECK_EQUAL(1, 0, "not implemented") From XX1S_QLF
     testBlock .="`r`n`r`n"
     testBlock .= "  # cleanup`r`n`r`n"
-    testBlock .= "End"
+    testBlock .= "End`r`n`r`n"
 
     return testBlock
 }

@@ -7,11 +7,6 @@ SendMode, Input
 #Persistent
 SetTimer, ^b, 6000
 Return
-
-^!1:: Send, XX1B ; print XX1B - Ctrl + Alt + 1
-^!2:: Send, XX1S_ ; print XX1S_ - Ctrl + Alt + 2
-^!3:: Send, XX3F ; print XX3F - Ctrl + Alt + 3
-^!c:: Send, CRETE- ; Ctrl + Alt + c - print CRETE-
 ; ----------------------------------------------------------------------------
 
 ;; print QLF outside of eclipse
@@ -30,17 +25,37 @@ Return
 */
 ; ----------------------------------------------------------------------------
 #ifWinActive ahk_class SWT_Window0
+^!n::   ; Ctrl + Alt + n
+    storeClipboard(false)
+    prepend := "num$("
+    append := ")"
+    textToSurround = ;
+    cut()
+    textToSurround := Clipboard
+    
+    Clipboard := prepend . textToSurround . append
+    MsgBox, % "2. clip =" . Clipboard 
+
+    paste()
+    sleep(250)
+    restoreClipboard(false)
+Return
+
+
 ;; CREATE
 ::-c::    ; auto-complete -c
     storeClipboard(false)
     lineText := getText(true)
-    lineText := Trim(lineText)
+    lineText := RTrim(lineText)
+    lineText := Trim(lineText, OmitChars := """")
+    prepend = ;
     if(lineText){
-        tableCode := % lineText
+        tableCode := """" . lineText . """"
     }else{
         tableCode = ""
+        prepend := "  "
     }
-    Clipboard := "  Call CREATE(""" . tableCode . """, """",) From XX1S_QLF"
+    Clipboard := prepend . "Call CREATE(" . tableCode . ", """",) From XX1S_QLF"
     paste()
     Send, {Left 17}
     restoreClipboard(false)
@@ -50,14 +65,16 @@ Return
 ::-e::   ; auto-complete -e
     storeClipboard(false)
     lineText := getText(true)
-    lineText := Trim(lineText)
+    lineText := Trim(lineText, OmitChars := """")
+    prepend = ;
     if(lineText){
-        tableCode := % lineText
+        tableCode := """" . lineText . """"
     }
-    ; else{
-    ;     tableCode =   ""
-    ; }
-    Clipboard := "  Call EMBALM(""" . tableCode . """, """") From XX1S_QLF"
+    else{
+        tableCode = ""
+        prepend := "  "
+    }
+    Clipboard := prepend . "Call EMBALM(" . tableCode . ", """") From XX1S_QLF"
     paste()
     Send, {Left 16}
     restoreClipboard(false)
@@ -186,16 +203,6 @@ Return
     ; Send, {Left 3}
 Return
 
-;; splits current line on cursor and adds & as first character of new line
-^NumpadEnter::  ; Ctrl + NumpadEnter
-    newFieldLine = `n&
-    storeClipboard(false)
-    assignClipboard(false, newFieldLine)
-    paste()
-    sleep(175)
-    restoreClipboard(false)
-Return
-
 ;; re-run previous test
 ^r::    ; Ctrl + r
     Send, {F7 Down}{F7 Up}                  ; compile
@@ -214,7 +221,6 @@ Return
     storeClipboard(false)
     builtBlock = ;
     StringReplace, Clipboard, Clipboard, `r`n`r`n, `n, All
-    ; delimiter = |
     if (InStr(Clipboard, "Call TEST(", true, 1, 2)) {
         ; testArray := parseStringToArray(Clipboard, delimiter)
         Loop, Parse, Clipboard, `n
@@ -319,7 +325,13 @@ Return
 
 ;; print CHECK_EQUAL
 ^+z::   ; Ctrl + Shift + z
-    Send, Call CHECK_EQUAL(,, "") From XX1S_QLF{Left 20}
+    storeClipboard(true)
+    assign := "Call CHECK_EQUAL(,, """") From XX1S_QLF"
+    assignClipboard(false, assign)
+    paste()
+    sleep(100)
+    restoreClipboard(false)
+    Send, {Left 20}
 Return
 
 ;; print CHECK_NOTEQUAL
@@ -377,9 +389,33 @@ Return
 Return
 
 ;; restart eclipse
-^!+r::
+^!+r:: ; Ctrl + Shift  + Alt + r
     Send, !f{Up 2}{Enter}    ; Alt + f + Up (2 times) + Enter
 Return
+
+;; toggle comment/uncomment line
+^+/::    ; Ctrl + Shift + /
+    chunk := getText(false)
+    replacedLine = ;
+    replacedClip = ;
+    Loop, Parse, chunk, `n
+    {
+        firstCharacter := SubStr(A_LoopField, 1, 1)
+        ; MsgBox, % firstCharacter
+        if (firstCharacter = "#"){
+            replacedLine := SubStr(A_LoopField, 2)
+        }else if(firstCharacter = " "){
+            replacedLine := "#" . A_LoopField
+        }
+        replacedClip .= replacedLine
+        ; MsgBox, replacedClip = %replacedClip%
+    }
+    assignClipboard(true, replacedClip)
+    paste()
+    sleep(150)
+    restoreClipboard(false)
+Return
+
 #ifWinActive
 
 ; make it also work in "Open Safe X3 source file" window
