@@ -2,6 +2,7 @@
 #Include, %A_ScriptDir%\eclipse.ahk
 #Include, %A_ScriptDir%\eclipseHelper.ahk
 #Include, %A_ScriptDir%\desktop.ahk
+#Include, %A_ScriptDir%\mintty.ahk
 #Include, %A_ScriptDir%\text.ahk
 SendMode, Input
 #SingleInstance, force
@@ -19,23 +20,3 @@ Return
 ^!2:: Send, XX1S_ ; print XX1S_ - Ctrl + Alt + 2
 ^!3:: Send, XX3F ; print XX3F - Ctrl + Alt + 3
 ^!c:: Send, CRETE- ; Ctrl + Alt + c - print CRETE-
-#IfWinActive, ahk_class mintty
-    ^!c:: Send, CRETE- ; Ctrl + Alt + c - print CRETE-
-#IfWinActive
-; ----------------------------------------------------------------------------
-/*
-* MINGW64 terminal
-*/
-; ----------------------------------------------------------------------------
-#IfWinNotActive, ahk_class mintty
-;; print AutoHotKey
-::ahk::   ; auto-complete ahk
-    Send, AutoHotKey{Space}  ; Return AutoHotKey
-Return
-
-::gahk::
-    Send, {!}g{Space}AutoHotKey{Space}
-Return
-#IfWinNotActive
-; [end MING64]
-; ----------------------------------------------------------------------------

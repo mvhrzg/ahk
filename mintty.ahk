@@ -18,6 +18,7 @@ Return
 ::gahk::
     Send, {!}g{Space}AutoHotKey{Space}
 Return
+
 #IfWinNotActive
 
 ; [end NOT]
@@ -29,10 +30,25 @@ Return
 */
 ; ----------------------------------------------------------------------------
 #IfWinActive, ahk_class mintty
-	MsgBox, mintty open
 ; insert 'python' string
 ::-py::	; auto-complete -p
 	Send, python
+Return
+
+#e::
+	directory = ;
+	WinGetActiveTitle, gitBashWindow
+	; search for the first (R*1*) "/" coming from the right (*R*1) to extract the explorer window's title (it equals the directory)
+	StringGetPos, firstSlash, gitBashWindow, / , R1	; gets the position of the last character before "/"
+	; extract the directory's name
+	directory := SubStr(gitBashWindow, firstSlash + 2)	; + 2 to forget the last character before "/" and also "/"
+	; if the window for this directory if already open, activate it
+	IfWinExist, % directory
+		WinActivate ; uses the last found window
+	else
+		; otherwise, open it
+		Send, explorer {NumpadDot}{Enter}
+
 Return
 
 #IfWinActive
