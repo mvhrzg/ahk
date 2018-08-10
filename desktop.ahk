@@ -4,6 +4,13 @@ SendMode, Input
 #SingleInstance, force
 #WinActivateForce
 
+;; insert "!g sage x3 " in firefox
+::sgx::    ; auto-complete sgx
+if WinActive("ahk_class MozillaWindowClass"){
+     Send, {!}g sage x3 {A_Space}
+}
+Return
+
 ; ----------------------------------------------------------------------------
 /*
 * Taskbar hotkeys

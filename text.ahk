@@ -7,7 +7,7 @@ SendMode, Input
 ^!u::    ; Ctrl + Alt + u
     storeClipboard(false)
     sleep(150)
-    copy()   ; Ctrl + c
+    cut()   ; Ctrl + c
     StringUpper, Clipboard, Clipboard
     paste()
     sleep(250)
@@ -18,7 +18,7 @@ Return
 ^!l::    ; Ctrl + Alt + l
     storeClipboard(false)
     sleep(150)
-    copy()   ; Ctrl + c
+    cut()   ; Ctrl + c
     StringLower, Clipboard, Clipboard
     paste()
     sleep(250)

@@ -26,17 +26,24 @@ Return
 ; ----------------------------------------------------------------------------
 #ifWinActive ahk_class SWT_Window0
 ^!n::   ; Ctrl + Alt + n
-    storeClipboard(false)
-    prepend := "num$("
-    append := ")"
-    textToSurround = ;
+    storeClipboard(true)
     cut()
-    textToSurround := Clipboard
+    sleep(50)
+    ; if anything is selected, surround just that with num$()
+    if (Clipboard){
+        prepend := "num$("
+        append := ")"
+        textToSurround = ;
+        textToSurround := Clipboard
+        Clipboard := prepend . textToSurround . append
+        paste()
+        sleep(150)
+    }
+    ; if nothing is selected, surround contents on line with $num()
+    else{
+        Send, {Home}num$({End})
+    }
     
-    Clipboard := prepend . textToSurround . append
-
-    paste()
-    sleep(250)
     restoreClipboard(false)
 Return
 
@@ -313,13 +320,14 @@ Return
     Send, {#}{*}{*}{Enter Down}{Enter Up}
 Return
 
-;; print INLINE_LOG with comment
-!^d::   ; Alt + Ctrl + d + text to log + Enter
-    Input, log,,{Enter},,
-    if !log
-        Send, Call INLINE_LOG("") From XX1S_QLF{Left 16}
-    else
-        Send, Call INLINE_LOG("%log%") From XX1S_QLF{Left 15}{-}num$(){Left}
+;; prepend contents of line with Infbox
+::-inf::    ; auto-complete -inf
+    Send, {Home}Infbox {End}
+Return
+
+;; wrap line contents with INLINE_LOG call
+^+i::   ; write what to log, type Ctrl + Shift + i
+    Send, {Home}Call INLINE_LOG({End}) From XX1S_QLF
 Return
 
 ;; print CHECK_EQUAL
@@ -335,11 +343,17 @@ Return
 
 ;; print CHECK_NOTEQUAL
 ^+n::   ; Ctrl + Shift + n
-    Send, Call CHECK_NOTEQUAL(,, "") From XX1S_QLF{Left 20}
+    storeClipboard(true)
+    assign := "Call CHECK_NOTEQUAL(,, """") From XX1S_QLF"
+    assignClipboard(false, assign)
+    paste()
+    sleep(100)
+    restoreClipboard(false)
+    Send, {Left 20}
 Return
 
 ;; ASETERROR
-::-ase::   ; auto-complete -aset
+::-ase::   ; auto-complete -ase
     lineText := getText(true)   ; get line text
     ; parts: [1]instance, [2]field name, [3]text, [4]severity, [5]assignable integer
     parts := parseStringToArray(lineText, A_Space, """")   ; parse each thing separated by spaces
@@ -392,6 +406,10 @@ Return
     Send, !f{Up 2}{Enter}    ; Alt + f + Up (2 times) + Enter
 Return
 
+
+; ----------------------------------------------------------------------------
+;  NOT WORKING
+; ----------------------------------------------------------------------------
 ;; toggle comment/uncomment line
 ^+/::    ; Ctrl + Shift + /
     chunk := getText(false)
@@ -414,6 +432,7 @@ Return
     sleep(150)
     restoreClipboard(false)
 Return
+; ----------------------------------------------------------------------------
 
 #ifWinActive
 

@@ -39,7 +39,6 @@ getText(callRestoreClipboard){
     storeClipboard(true)
     sleep(250)
     Send, {ShiftDown}{Home}{ShiftUp}
-    ; Send, {Home}{End}
     cut()
     textToGet := Clipboard
     if (callRestoreClipboard){

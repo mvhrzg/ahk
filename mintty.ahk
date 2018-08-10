@@ -42,13 +42,16 @@ Return
 	StringGetPos, firstSlash, gitBashWindow, / , R1	; gets the position of the last character before "/"
 	; extract the directory's name
 	directory := SubStr(gitBashWindow, firstSlash + 2)	; + 2 to forget the last character before "/" and also "/"
+	sleep(50)
 	; if the window for this directory if already open, activate it
 	IfWinExist, % directory
+	{
 		WinActivate ; uses the last found window
-	else
+	}
+	else {
 		; otherwise, open it
 		Send, explorer {NumpadDot}{Enter}
-
+	}
 Return
 
 #IfWinActive
