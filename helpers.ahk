@@ -35,10 +35,11 @@ sleep(milliseconds){
 }
 
 getText(callRestoreClipboard){
+    textToGet =
     storeClipboard(true)
     sleep(250)
-    textToGet =
     Send, {ShiftDown}{Home}{ShiftUp}
+    ; Send, {Home}{End}
     cut()
     textToGet := Clipboard
     if (callRestoreClipboard){
@@ -63,21 +64,6 @@ countCharacters(){
     selectedText := getText(true)
     return StrLen(selectedText)
 }
-
-;; displays all active windows (with ID, class, title and text) in a popup
-^+!l::	;Ctrl + Shift + Alt + l
-    WinGet, id, list,,, Program Manager
-    Loop, %id%
-    {
-        this_id := id%A_Index%
-        WinActivate, ahk_id %this_id%
-        WinGetClass, this_class, ahk_id %this_id%
-        WinGetTitle, this_title, ahk_id %this_id%
-        WinGetText, this_text, ahk_id %this_id%
-        MsgBox, 4, ,Window %a_index% of %id%`nID: %this_id%`nCLASS: %this_class%`nTITLE: %this_title%`nTEXT: %this_text%`n`nContinue (Ctrl + C to copy all text)?
-        ifMsgBox, NO, break
-    }
-Return
 
 ; replaces selected text with string of ascii numbers for each character
 ::-ascii::  ; auto-complete -ascii
@@ -338,4 +324,24 @@ LiteralConversionButtons:
     ControlSetText, Button1, &Literal
     ControlSetText, Button2, &Conversion 
 return
+; ----------------------------------------------------------------------------
+
+/*
+* WINDOW HELPER
+*/
+; ----------------------------------------------------------------------------
+;; displays all active windows (with ID, class, title and text) in a popup
+^+!l::  ;Ctrl + Shift + Alt + l
+    WinGet, id, list,,, Program Manager
+    Loop, %id%
+    {
+        this_id := id%A_Index%
+        WinActivate, ahk_id %this_id%
+        WinGetClass, this_class, ahk_id %this_id%
+        WinGetTitle, this_title, ahk_id %this_id%
+        WinGetText, this_text, ahk_id %this_id%
+        MsgBox, 4, ,Window %a_index% of %id%`nID: %this_id%`nCLASS: %this_class%`nTITLE: %this_title%`nTEXT: %this_text%`n`nContinue (Ctrl + C to copy all text)?
+        ifMsgBox, NO, break
+    }
+Return
 ; ----------------------------------------------------------------------------

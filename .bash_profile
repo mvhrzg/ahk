@@ -99,8 +99,6 @@ hr() {
 	gpl
 }
 
-
-
 rupd() {
 	HOMEDIR=$HOME"/Documents/Repositories"
 	DIRS=`ls -l $HOMEDIR | egrep '^d' | awk '{print $9}'`
