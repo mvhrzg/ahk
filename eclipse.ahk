@@ -26,7 +26,7 @@ Return
 ; ----------------------------------------------------------------------------
 #ifWinActive ahk_class SWT_Window0
 ^!n::   ; Ctrl + Alt + n
-    storeClipboard(true)
+    storeClipboard(false)
     cut()
     sleep(50)
     ; if anything is selected, surround just that with num$()
