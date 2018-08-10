@@ -12,11 +12,11 @@ SendMode, Input
 ; #IfWinNotActive
 
 ; set mouse to left-handed configuration
-^F1:: ; Ctrl + (Fn) + F1
+^F1:: ; Ctrl + F1
     swapMouseButtons(True)
 Return
 
-^F2:: ; Ctrl + (Fn) + F2
+^F2:: ; Ctrl + F2
     swapMouseButtons(False)
 Return
 
