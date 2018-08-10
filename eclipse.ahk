@@ -30,21 +30,20 @@ Return
     cut()
     sleep(50)
     ; if anything is selected, surround just that with num$()
-    if (Clipboard){
-        prepend := "num$("
-        append := ")"
-        textToSurround = ;
-        textToSurround := Clipboard
-        Clipboard := prepend . textToSurround . append
-        paste()
-        sleep(150)
-    }
-    ; if nothing is selected, surround contents on line with $num()
-    else{
-        Send, {Home}num$({End})
-    }
-    
+    prepend := "num$("
+    append := ")"
+    textToSurround = ;
+    textToSurround := Clipboard
+    Clipboard := prepend . textToSurround . append
+
+    paste()
+    sleep(150)
     restoreClipboard(false)
+Return
+
+;f surround contents of line with $num()
+::@n::   ; auto-complete @ + n
+    Send, {Home}num$({End})
 Return
 
 
