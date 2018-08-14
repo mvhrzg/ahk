@@ -86,7 +86,7 @@ Return
 Return
 
 ;; switch to chrome
-#+`::
+#+`::   ; Win + Shift + `
     Process, Exist, chrome.exe ; check if running
     If (errorLevel) ; if process exists, switch to window
         WinActivate, ahk_exe chrome.exe
@@ -95,7 +95,7 @@ Return
 Return
 
 ;; <<<<<<<< cycle through windows of same class >>>>>>>>
-^`:: ; Ctrl + ` : switch between windows of the same class
+^CapsLock:: ; Win + Capslock : switch between windows of the same class
 WinGetClass, CurrentActive, A
 WinGet, Instances, Count, ahk_class %CurrentActive%
 If Instances > 1

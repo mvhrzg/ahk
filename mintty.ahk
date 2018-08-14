@@ -50,7 +50,10 @@ Return
 	}
 	else {
 		; otherwise, open it
-		Send, explorer {NumpadDot}{Enter}
+		storeClipboard(false)
+		assignClipboard(false, "explorer .")
+		Send, %Clipboard% {Enter}
+		restoreClipboard(false)
 	}
 Return
 

@@ -300,8 +300,9 @@ Return
 Return
 
 ;; build instance. example: 1wp OR 1wp-package
-^!i::   ; Ctrl + Alt + i
-    Input, contents,,{Enter},,
+::@i::   ; auto-complete @ + i
+    contents := getText(true)
+    ; RTrim(contents)
     r_array := _instance(contents)
     if(r_array [1] != "")  ; if we returned the code
     {
@@ -310,7 +311,7 @@ Return
         name := r_array[3]
 
         identifier := (name ? name : abbrev) ; if name is empty, use abbrev : else, use name
-        Send, Local Instance %identifier% Using C_%code%%abbrev% : [L]%identifier% = NewInstance C_%code%%abbrev% AllocGroup null
+        Send, Local Instance %identifier%Using C_%code%%abbrev%: [L]%identifier%= NewInstance C_%code%%abbrev%AllocGroup null
     }
 Return
 
