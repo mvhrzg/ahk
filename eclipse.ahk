@@ -148,18 +148,17 @@ return
 
 ; log_instance
 ::-log::  ; auto-complete hotkey
-    storeClipboard(true)
     instance := getText(true)
     instance := RTrim(instance) ; remove trailing space between instanceName and -log
     call = ;
     if(instance){
         call := % "Call LOG_INSTANCE(" . instance . ") From XX1S_QLF"
-        assignClipboard(false, call)
+        assignClipboard(true, call)
         paste()
         sleep(250)
     }else{
         call := "Call LOG_INSTANCE() From XX1S_QLF"
-        assignClipboard(false, call)
+        assignClipboard(true, call)
         paste()
         sleep(100)
         Send, {Left 15}
@@ -178,7 +177,12 @@ Return
 
 ;; add test stub
 ^t::    ; Ctrl + t
-    Send, Call TEST("") From XX1S_QLF{Left 16}
+    assign := "Call TEST(,, """") From XX1S_QLF"
+    assignClipboard(true, assign)
+    paste()
+    sleep(100)
+    restoreClipboard(false)
+    Send, {Left 16}
 Return
 
 ;; add group description
@@ -200,8 +204,7 @@ Return
 ;; splits current line on cursor and adds &+{Tab}";" at beginning of new line
 ^Enter::    ; Ctrl + Enter
     newFieldLine = `r`n&    ; +  ";"
-    storeClipboard(false)
-    assignClipboard(false, newFieldLine)
+    assignClipboard(true, newFieldLine)
     paste()
     sleep(100)
     restoreClipboard(false)
@@ -251,7 +254,7 @@ Return
             builtBlock := _buildTestBlock(Clipboard)
         }
     }
-    assignClipboard(true, builtBlock)
+    assignClipboard(false, builtBlock)
     paste()
     sleep(250)
     restoreClipboard(true)
@@ -343,9 +346,8 @@ Return
 
 ;; print CHECK_NOTEQUAL
 ^+n::   ; Ctrl + Shift + n
-    storeClipboard(true)
     assign := "Call CHECK_NOTEQUAL(,, """") From XX1S_QLF"
-    assignClipboard(false, assign)
+    assignClipboard(true, assign)
     paste()
     sleep(100)
     restoreClipboard(false)

@@ -125,9 +125,9 @@ restoreClipboard(clearBeforeRestore){
     assignClipboard(true, StoredClip)
 }
 
-assignClipboard(clearFirst, variable := "") {
-    if (clearFirst){
-        clearClipboard()
+assignClipboard(storeFirst, variable := "") {
+    if (storeFirst){
+        storeClipboard(false)
     }
     Clipboard := variable
 }
