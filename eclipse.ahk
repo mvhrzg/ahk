@@ -177,7 +177,7 @@ Return
 
 ;; add test stub
 ^t::    ; Ctrl + t
-    assign := "Call TEST(,, """") From XX1S_QLF"
+    assign := "Call TEST("""") From XX1S_QLF"
     assignClipboard(true, assign)
     paste()
     sleep(100)
@@ -267,13 +267,13 @@ Return
 Return
 
 ;; paste freegroup and kill
-::-fg::   ; auto-complete: -fg
-    storeClipboard(false)
-    code := getText(false)
+::-f::   ; auto-complete: -fg
+    ; storeClipboard(false)
+    code := getText(true)
     code := RTrim(code)
     _freeGroup(code)
     sleep(100)
-    restoreClipboard(false)
+    ; restoreClipboard(false)
 Return
 
 ;; insert full timing log calls

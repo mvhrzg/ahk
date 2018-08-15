@@ -48,9 +48,11 @@ _qlf(contents){
 }
 
 _freeGroup(code){
-    freeAndKill := "FreeGroup " . code . " : Kill " . code
-    assignClipboard(false, freeAndKill)
+    free := "FreeGroup [L]" . code
+    assignClipboard(true, free)
     paste()
+    sleep(100)
+    restoreClipboard(true)
 }
 
 _buildTestBlock(testName){
