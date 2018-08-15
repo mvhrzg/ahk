@@ -405,9 +405,7 @@ Return
 
 ;; restart eclipse
 ^!+r:: ; Ctrl + Shift  + Alt + r
-    Run taskkill /F /IM eclipse.exe,, Hide
-    sleep(250)
-    run, "C:\Program Files (x86)\eclipse\eclipse.exe"
+    GoSub ^!q ;Call hotkey ^!q
 Return
 
 

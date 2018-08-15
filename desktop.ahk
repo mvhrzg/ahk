@@ -53,6 +53,13 @@ Return
         run, "C:\Program Files (x86)\eclipse\eclipse.exe"
 Return
 
+;; restart eclipse from anywhere
+^+q::   ; Ctrl + Shift + q
+    Run taskkill /F /IM eclipse.exe,, Hide
+    sleep(250)
+    run, "C:\Program Files (x86)\eclipse\eclipse.exe"
+Return
+
 ;; switch to open amazon music window
 #LAlt::    ; Win + leftAlt
     Process, Exist, "Amazon Music.exe" ; check if amazon music is running
