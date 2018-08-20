@@ -110,18 +110,19 @@ If Instances > 1
 return
 
 #PgDn:: ; Wing + PgDn : next window
-WinGetClass, CurrentActive, A
-WinGet, Instances, Count, ahk_class %CurrentActive%
+WinGet, exe, ProcessName, A
+WinGet, Instances, Count, ahk_exe %exe%
 If Instances > 1
     WinSet, Bottom,, A
-WinActivate, ahk_class %CurrentActive%
+WinActivate, ahk_exe %exe%
 return
 
 #PgUp:: ; Wing + PgUp : previous window
-WinGetClass, CurrentActive, A
-WinGet, Instances, Count, ahk_class %CurrentActive%
+; WinGetClass, CurrentActive, A
+WinGet, exe, ProcessName, A
+WinGet, Instances, Count, ahk_exe %exe%
 If Instances > 1
-    WinActivateBottom, ahk_class %CurrentActive%
+    WinActivateBottom, ahk_exe %exe%
 return
 ;; <<<<<<<< [end] cycle windows of same class >>>>>>>>
 
