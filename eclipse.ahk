@@ -405,7 +405,7 @@ Return
 
 ;; restart eclipse
 ^!+r:: ; Ctrl + Shift  + Alt + r
-    GoSub ^!q ;Call hotkey ^!q
+    GoSub ^+q ;Call hotkey ^+q (Ctrl + Shift + q)
 Return
 
 
