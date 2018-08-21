@@ -16,14 +16,14 @@ Return
 * Taskbar hotkeys
 */
 ; ----------------------------------------------------------------------------
-;; switch to open stride tab if open. otherwise, open hipchat
+;; switch to open slack tab if open. otherwise, open
 #i:: ; Win + i
-    SetTitleMatchMode, 2    ; open a window if its class contains stride
-    Process, Exist, Stride.exe ; check if stride is running
+    SetTitleMatchMode, 2    ; open a window if its class contains slack
+    Process, Exist, slack.exe ; check if slack is running
     If (errorLevel) ; if process exists, switch to window
-        WinActivate, Stride
+        WinActivate, ahk_exe slack.exe
     Else ; if process doesn't exist, errorLevel = 0
-        run, "C:\Users\Mariana\AppData\Local\Stride\Stride.exe"
+        run, "C:\Users\Mariana\AppData\Local\slack\app-3.3.0\slack.exe"
 Return
 
 ;; switch to open sublime tab if open. otherwise, open sublime
@@ -39,7 +39,7 @@ Return
 #`:: ; Win + `
     Process, Exist, firefox.exe ; check if firefox is running
     If (errorLevel) ; if process exists, switch to window
-        WinActivate, ahk_class MozillaWindowClass ; ahk_exe firefox.exe
+        WinActivate, ahk_exe firefox.exe  ; ahk_class MozillaWindowClass
     Else ; if process doesn't exist, errorLevel = 0
         run, "C:\Program Files\Firefox Developer Edition\firefox.exe"
 Return
@@ -48,16 +48,17 @@ Return
 #q::    ; Win + q to switch to eclipse
     Process, Exist, eclipse.exe ; check if eclipse is running
     If (errorLevel) ; if process exists, switch to window
-        WinActivate, ahk_exe eclipse.exe ; ahk_class SWT_Window0
+        WinActivate, ahk_exe eclipse.exe
     Else ; if process doesn't exist, errorLevel = 0
         run, "C:\Program Files (x86)\eclipse\eclipse.exe"
 Return
 
 ;; restart eclipse from anywhere
 ^+q::   ; Ctrl + Shift + q
-    Run taskkill /F /IM eclipse.exe,, Hide
-    sleep(250)
-    run, "C:\Program Files (x86)\eclipse\eclipse.exe"
+    sleep(100)
+    Run, taskkill /F /IM eclipse.exe,, Hide
+    sleep(500)
+    Run, "C:\Program Files (x86)\eclipse\eclipse.exe",, max
 Return
 
 ;; switch to open amazon music window
