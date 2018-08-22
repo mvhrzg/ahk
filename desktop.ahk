@@ -56,9 +56,9 @@ Return
 ;; restart eclipse from anywhere
 ^+q::   ; Ctrl + Shift + q
     sleep(100)
-    Run, taskkill /F /IM eclipse.exe,, Hide
-    sleep(500)
-    Run, "C:\Program Files (x86)\eclipse\eclipse.exe",, max
+    RunWait, taskkill /F /IM eclipse.exe,, Hide
+    sleep(1000)
+    Run, "C:\Program Files (x86)\eclipse\eclipse.exe"
 Return
 
 ;; switch to open amazon music window
