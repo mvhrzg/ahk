@@ -36,25 +36,27 @@ Return
 Return
 
 #e::
-	directory = ;
-	WinGetActiveTitle, gitBashWindow
-	; search for the first (R*1*) "/" coming from the right (*R*1) to extract the explorer window's title (it equals the directory)
-	StringGetPos, firstSlash, gitBashWindow, / , R1	; gets the position of the last character before "/"
-	; extract the directory's name
-	directory := SubStr(gitBashWindow, firstSlash + 2)	; + 2 to forget the last character before "/" and also "/"
-	sleep(50)
-	; if the window for this directory if already open, activate it
-	IfWinExist, % directory
-	{
-		WinActivate ; uses the last found window
-	}
-	else {
-		; otherwise, open it
-		storeClipboard(false)
-		assignClipboard(false, "explorer .")
-		Send, %Clipboard% {Enter}
-		restoreClipboard(false)
-	}
+	; directory = ;
+	; WinGetActiveTitle, gitBashWindow
+	; ; search for the first (R*1*) "/" coming from the right (*R*1) to extract the explorer window's title (it equals the directory)
+	; StringGetPos, firstSlash, gitBashWindow, / , R1	; gets the position of the last character before "/"
+	; ; extract the directory's name
+	; directory := SubStr(gitBashWindow, firstSlash + 2)	; + 2 to forget the last character before "/" and also "/"
+	; sleep(50)
+	; ; if the window for this directory if already open, activate it
+	; IfWinExist, % directory
+	; {
+	; 	WinActivate ; uses the last found window
+	; }
+	; else {
+	; 	; otherwise, open it
+	; 	storeClipboard(false)
+	; 	assignClipboard(false, "start")
+	; 	Send, %Clipboard% {Enter}
+	; 	restoreClipboard(false)
+	; }
+
+	Send, {Home}start {Enter}
 Return
 
 #IfWinActive
