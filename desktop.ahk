@@ -71,7 +71,7 @@ Return
 Return
 
 ; switch to task manager window if open, or start process if not
-#-::
+^-::
     Send, ^+{Esc}
 Return
 
