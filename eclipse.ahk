@@ -24,8 +24,7 @@ Return
 * Eclipse context specific hotkeys
 */
 ; ----------------------------------------------------------------------------
-#IfWinActive, ahk_exe eclipse.exe
-;#ahk_class SWT_Window0
+#IfWinActive, ahk_exe eclipse.exe ahk_class SWT_Window0
 ^!n::   ; Ctrl + Alt + n
     storeClipboard(false)
     cut()
