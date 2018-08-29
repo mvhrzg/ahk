@@ -24,7 +24,8 @@ Return
 * Eclipse context specific hotkeys
 */
 ; ----------------------------------------------------------------------------
-#ifWinActive ahk_class SWT_Window0
+#IfWinActive, ahk_exe eclipse.exe
+;#ahk_class SWT_Window0
 ^!n::   ; Ctrl + Alt + n
     storeClipboard(false)
     cut()
@@ -147,7 +148,7 @@ Return
 return
 
 ; log_instance
-::-log::  ; auto-complete hotkey
+!l::  ; Alt + l
     instance := getText(true)
     instance := RTrim(instance) ; remove trailing space between instanceName and -log
     call = ;
@@ -260,20 +261,9 @@ Return
     restoreClipboard(true)
 Return
 
-;; prepend clipboard contents with "Call"
-^+a::    ;Ctrl + Shift + a
-    Send, Call{Space}
-    paste()
-Return
-
 ;; paste freegroup and kill
-::-f::   ; auto-complete: -fg
-    ; storeClipboard(false)
-    code := getText(true)
-    code := RTrim(code)
-    _freeGroup(code)
-    sleep(100)
-    ; restoreClipboard(false)
+^+f::   ; Ctrl + Shift + f
+    Send, {Home}FreeGroup {End}
 Return
 
 ;; insert full timing log calls

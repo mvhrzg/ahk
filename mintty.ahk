@@ -35,7 +35,8 @@ Return
 	Send, python
 Return
 
-#e::
+; open the directory. type the subdirectory (if any) and hit hotkey
+^Enter::	; Ctrl + Enter
 	; directory = ;
 	; WinGetActiveTitle, gitBashWindow
 	; ; search for the first (R*1*) "/" coming from the right (*R*1) to extract the explorer window's title (it equals the directory)

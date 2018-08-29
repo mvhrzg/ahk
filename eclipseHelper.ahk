@@ -47,14 +47,6 @@ _qlf(contents){
     Return array
 }
 
-_freeGroup(code){
-    free := "FreeGroup [L]" . code
-    assignClipboard(true, free)
-    paste()
-    sleep(100)
-    restoreClipboard(true)
-}
-
 _buildTestBlock(testName){
     testBlock = ;
     testBlock = #**`r`n#* `r`n#*!`r`n

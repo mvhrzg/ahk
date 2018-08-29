@@ -6,6 +6,7 @@
 #Include, %A_ScriptDir%\text.ahk
 SendMode, Input
 #SingleInstance, force
+#WinActivateForce
 
 #z:: WinMaximize A ; Alt + F2 - maximize current window
 #x:: WinMinimize A ; Alt + F2 - minimize current window

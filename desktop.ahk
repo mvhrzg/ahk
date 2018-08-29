@@ -20,8 +20,9 @@ Return
 #i:: ; Win + i
     SetTitleMatchMode, 2    ; open a window if its class contains slack
     Process, Exist, slack.exe ; check if slack is running
-    If (errorLevel) ; if process exists, switch to window
+    If (errorLevel){ ; if process exists, switch to window
         WinActivate, ahk_exe slack.exe
+    }
     Else ; if process doesn't exist, errorLevel = 0
         run, "C:\Users\Mariana\AppData\Local\slack\app-3.3.0\slack.exe"
 Return
@@ -47,8 +48,10 @@ Return
 ;; switch to open eclipse tab if open. otherwise, open eclipse
 #q::    ; Win + q to switch to eclipse
     Process, Exist, eclipse.exe ; check if eclipse is running
-    If (errorLevel) ; if process exists, switch to window
+    If (errorLevel){ ; if process exists, switch to window
         WinActivate, ahk_exe eclipse.exe
+        WinMaximize, A
+    }
     Else ; if process doesn't exist, errorLevel = 0
         run, "C:\Program Files (x86)\eclipse\eclipse.exe"
 Return
