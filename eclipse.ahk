@@ -344,59 +344,9 @@ Return
 Return
 
 ;; ASETERROR
-::-ase::   ; auto-complete -ase
-    lineText := getText(true)   ; get line text
-    ; parts: [1]instance, [2]field name, [3]text, [4]severity, [5]assignable integer
-    parts := parseStringToArray(lineText, A_Space, """")   ; parse each thing separated by spaces
-
-    if(parts[1]){  ; if parts 1 is not empty, build string
-        if(parts[1] = "-"){  ; could be u, or - (for U_THIS or this)
-            instance := "this"
-        }else{
-            if(StrLen(parts[1]) > 1){
-                instance = % parts[1]
-            }else if(parts[1] = "U"){
-                instance := parts[1] . "_THIS"
-            }
-
-            StringUpper, instance, instance
-        }
-        if(parts.MaxIndex() > 1){    ; get the number of parts passed in
-            if(parts[2] = "-"){
-                field = ""
-            }else{
-                field = % parts[2]
-                StringUpper, field, field
-            }
-            if(parts[3]){
-                prompt = % parts[3]
-                StringReplace, prompt, prompt, `", `", All
-            }
-            if(parts[4]){
-                severity = % parts[4]
-                moveback := StrLen(severity) + 2
-            }
-            lineText := instance . ".ASETERROR(" . field . ", " . prompt . ", " . severity
-            if(parts[5]){
-                assign = % parts[5]
-                lineText := assign . " = fmet " . lineText
-            }else{
-                lineText := "Callmet " . lineText
-            }
-            ; moveback := moveback + 3
-            Send, %lineText%{Left %moveback%}
-        }
-        
-    }else{
-        Send, Callmet this.ASETERROR("", "", [V]CST_)
-    }
+^+s::   ; Strl + Shift + s
+    Send, {Home}Callmet this.ASETERROR({End})
 Return
-
-;; restart eclipse
-^!+r:: ; Ctrl + Shift  + Alt + r
-    GoSub ^+q ;Call hotkey ^+q (Ctrl + Shift + q)
-Return
-
 
 ; ----------------------------------------------------------------------------
 ;  NOT WORKING

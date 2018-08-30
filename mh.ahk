@@ -22,33 +22,23 @@ Return
 ^!3:: Send, XX3F ; print XX3F - Ctrl + Alt + 3
 ^!c:: Send, CRETE- ; Ctrl + Alt + c - print CRETE-
 
-;; restart computer
-^+!r::  ; Ctrl + Shift + Alt + r
-if !WinActive("ahk_class SWT_Window0"){  ; if not using this command from eclipse
-    MsgBox, 4,, Would you like to restart the computer?
-    IfMsgBox, Yes
-        Shutdown, 2 ; shutdown 2 = reboot. shutdown 6 = 2(reboot) + 4(force) = force reboot
-}
-Return 
-
-;; reload mh.ahk when pressing F7 from any .ahk script
+;; reload mh.ahk from any .ahk script
 #ifWinActive ahk_class PX_WINDOW_CLASS
 ^!s::   ; Ctrl + Alt + s
-WinGetActiveTitle, currentWindow
-StringGetPos, findSlash, currentWindow, \ , R1 ; gets the position of the last character before "\"
-currentScript := SubStr(currentWindow, findSlash + 2)  ; + 2 to forget the last character before "\" and also "\"
+    WinGetActiveTitle, currentWindow
+    StringGetPos, findSlash, currentWindow, \ , R1 ; gets the position of the last character before "\"
+    currentScript := SubStr(currentWindow, findSlash + 2)  ; + 2 to forget the last character before "\" and also "\"
 
-StringGetPos, findDash, currentScript, -, L
-currentScript := SubStr(currentScript, 1, findDash - 1)    ; remove the right end of the string ( - Sublime Text)
+    StringGetPos, findDash, currentScript, -, L
+    currentScript := SubStr(currentScript, 1, findDash - 1)    ; remove the right end of the string ( - Sublime Text)
 
-StringGetPos, findSlash, A_ScriptFullPath, \ , R1 ; gets the position of the last character before "\"
-activeScript := SubStr(A_ScriptFullPath, findSlash + 2)
+    StringGetPos, findSlash, A_ScriptFullPath, \ , R1 ; gets the position of the last character before "\"
+    activeScript := SubStr(A_ScriptFullPath, findSlash + 2)
 
-if WinActive("ahk_class PX_WINDOW_CLASS") and InStr(currentWindow, .ahk) > 0{
-    sleep(300)
-    MsgBox, % "reloading [" . activeScript . "] from [" . currentScript . "]"
-    reload, A_ScriptFullPath
-}
-#IfWinActive
-
+    if WinActive("ahk_class PX_WINDOW_CLASS") and InStr(currentWindow, .ahk) > 0{
+        sleep(300)
+        MsgBox, % "reloading [" . activeScript . "] from [" . currentScript . "]"
+        reload, A_ScriptFullPath
+    }
 Return
+#IfWinActive
