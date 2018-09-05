@@ -64,6 +64,17 @@ Return
         run, "C:\Program Files (x86)\eclipse\eclipse.exe"
 Return
 
+;; visual studio code
+#v::
+    Process, Exist, Code.exe ; check if eclipse is running
+    If (errorLevel){ ; if process exists, switch to window
+        WinActivate, ahk_exe Code.exe
+        WinMaximize, A
+    }
+    Else ; if process doesn't exist, errorLevel = 0
+        run, "C:\Users\Mariana\AppData\Local\Programs\Microsoft VS Code\Code.exe"
+Return
+
 ;; restart eclipse from anywhere
 ^+q::   ; Ctrl + Shift + q
     sleep(100)
