@@ -33,7 +33,7 @@ Return
         WinSet, Top,, A
     }
     Else ; if process doesn't exist, errorLevel = 0
-        run, "C:\Users\Mariana\AppData\Local\slack\app-3.3.0\slack.exe"
+        run, "C:\Users\Mariana\AppData\Local\slack\slack.exe"
 Return
 
 ;; switch to open sublime tab if open. otherwise, open sublime
