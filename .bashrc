@@ -111,9 +111,16 @@ fr() {
 }
 
 # field-reporting current master
-fr() {
+frm() {
   cd $HOME/Documents/Repositories/field-reporting
   gckm
+  gpl
+}
+
+# field-reporting current "develop"
+frd() {
+  cd $HOME/Documents/Repositories/field-reporting
+  git checkout develop
   gpl
 }
 
@@ -198,6 +205,10 @@ gaa() {
 #commit with message flag
 gco() {
   git commit -m 
+}
+
+gca() {
+  gaa && git commit -m
 }
 
 #pull
