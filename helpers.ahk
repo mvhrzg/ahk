@@ -130,6 +130,7 @@ assignClipboard(storeFirst, variable := "") {
         storeClipboard(false)
     }
     Clipboard := variable
+    sleep(100)
 }
 
 parseStringToArray(string, delimiter, wrapper := 0){

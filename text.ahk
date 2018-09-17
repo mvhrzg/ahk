@@ -67,3 +67,17 @@ return
     copy()
     appendToClipboard(Clipboard)
 Return
+
+; ----------------------------------------------------------------------------
+; Visual Studio Code
+; ----------------------------------------------------------------------------
+#ifWinActive ahk_exe Code.exe
+;; paste console.log(); in visual studio code
+^l::    ; Ctrl + l
+    console := "console.log();"
+    assignClipboard(true, console)
+    paste()
+    Send, {Left 2}
+    restoreClipboard(false)
+Return
+#ifWinActive
