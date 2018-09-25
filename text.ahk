@@ -74,10 +74,7 @@ Return
 #ifWinActive ahk_exe Code.exe
 ;; paste console.log(); in visual studio code
 ^l::    ; Ctrl + l
-    console := "console.log();"
-    assignClipboard(true, console)
-    paste()
-    Send, {Left 2}
-    restoreClipboard(false)
+    console = console.log();
+    Send, %console%{Left 2}
 Return
 #ifWinActive

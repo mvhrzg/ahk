@@ -13,7 +13,7 @@ SendMode, Input
 
 ;; clears clipboard
 
-!BackSpace:: ; Ctrl + Alt + Backspace
+!BackSpace:: ; Alt + Backspace
     clearClipboard()    ; clear it
 Return
 ; ----------------------------------------------------------------------------
