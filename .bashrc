@@ -168,12 +168,12 @@ gcl() {
 }
 
 #pushes to current branch name -- used when pushing for the first time
-gp() {
+gp1() {
   git push --set-upstream origin "$(git branch | grep \* | cut -d ' ' -f2)"
 }
 
 #git push (after first)
-gps() {
+gp() {
   git push
 }
 
