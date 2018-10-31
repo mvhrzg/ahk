@@ -287,6 +287,10 @@ dr() {
   dotnet run
 }
 
+dwr() {
+  dotnet watch run
+}
+
 dc() {
   dotnet clean
 }

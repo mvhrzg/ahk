@@ -37,7 +37,7 @@ Else ; if process doesn't exist, errorLevel = 0
 Return
 
 ;; switch to open slack tab if open. otherwise, open
-#i:: ; Win + i
+#k:: ; Win + k
 SetTitleMatchMode, 2    ; open a window if its class contains slack
 Process, Exist, slack.exe ; check if slack is running
 If (errorLevel){ ; if process exists, switch to window
