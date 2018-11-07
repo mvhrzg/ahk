@@ -37,7 +37,7 @@ Return
             StringLower, character, A_LoopField
         }else if (isLower(A_LoopField)){
             StringUpper, character, A_LoopField
-        ; if this character is a space, any punctuation, etc    
+        ; if this character is a space, any punctuation, etc
         }else if ((ascii(A_LoopField) >= 32  && ascii(A_LoopField) <= 64) || (ascii(A_LoopField) >= 91  && ascii(A_LoopField) <= 96) || (ascii(A_LoopField) >= 123 && ascii(A_LoopField) <= 126)){
             character := A_LoopField
         }

@@ -215,10 +215,10 @@ Return
 ^r::    ; Ctrl + r
     Send, {F7 Down}{F7 Up}                  ; compile
     sleep(200)
+    Send, {Shift}{Alt}{q}
     Send, {Shift Down}{Alt Down}{q Down}    ; hit view-console shortcut
-    sleep(100)
     Send, {Shift Up}{Alt Up}{q Up}          ; release view-console shortcut
-    sleep(500)
+    sleep(750)
     Send, {c Down}{c Up}                    ; hit and release terminal console key
     sleep(500)                              ; wait for terminal to open
     Send, {NumpadUp}{Enter}                 ; hit up + enter to run previous
@@ -344,7 +344,7 @@ Return
 Return
 
 ;; ASETERROR
-^+s::   ; Strl + Shift + s
+^+s::   ; Ctrl + Shift + s
     Send, {Home}Callmet this.ASETERROR({End})
 Return
 
@@ -372,6 +372,16 @@ Return
     paste()
     sleep(150)
     restoreClipboard(false)
+Return
+
+;; send func ASYRFNC.MESS(
+^+2::   ; Ctrl + Shift + 2 (Ctrl + @)
+    toClip := "func ASYRFNC.MES("
+    assignClipboard(true, toClip)
+    paste()
+    sleep(100)
+    restoreClipboard(false)
+    Send, {Left 1}
 Return
 ; ----------------------------------------------------------------------------
 
