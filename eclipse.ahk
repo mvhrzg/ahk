@@ -215,7 +215,6 @@ Return
 ^r::    ; Ctrl + r
     Send, {F7 Down}{F7 Up}                  ; compile
     sleep(200)
-    Send, {Shift}{Alt}{q}
     Send, {Shift Down}{Alt Down}{q Down}    ; hit view-console shortcut
     Send, {Shift Up}{Alt Up}{q Up}          ; release view-console shortcut
     sleep(750)
