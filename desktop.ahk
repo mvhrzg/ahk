@@ -24,30 +24,6 @@ Return
 * Taskbar hotkeys
 */
 ; ----------------------------------------------------------------------------
-;; switch to Robo 3T
-#+3::   ; Win + Shift + r
-Process, Exist, robo3t.exe ; check if sublime is running
-If (errorLevel){ ; if process exists, switch to window
-    WinActivate, ahk_exe robo3t.exe
-    WinSet, Top,, A
-}
-Else ; if process doesn't exist, errorLevel = 0
-    run, "C:\Program Files\Robo 3T 1.2.1\robo3t.exe"
-
-Return
-
-;; switch to open slack tab if open. otherwise, open
-#k:: ; Win + k
-SetTitleMatchMode, 2    ; open a window if its class contains slack
-Process, Exist, slack.exe ; check if slack is running
-If (errorLevel){ ; if process exists, switch to window
-    WinActivate, ahk_exe slack.exe
-    WinSet, Top,, A
-}
-Else ; if process doesn't exist, errorLevel = 0
-run, "C:\Users\Mariana\AppData\Local\slack\app-3.3.1\slack.exe"
-Return
-
 ;; switch to open sublime tab if open. otherwise, open sublime
 #s:: ; Win + s
     Process, Exist, sublime_text.exe ; check if sublime is running
@@ -56,7 +32,10 @@ Return
         WinSet, Top,, A
     }
     Else ; if process doesn't exist, errorLevel = 0
-        run, "C:\Program Files\Sublime Text 3\sublime_text.exe"
+        if(A_UserName != "mariana-work")
+            run, "C:\Program Files\Sublime Text 3\sublime_text.exe"
+        else
+            run, "C:\Users\mariana-work\Documents\Work installs\Sublime Text 3\sublime_text.exe"
 Return
 
 ;; switch to open firefox tab if open. otherwise, open firefox
@@ -91,7 +70,7 @@ Return
         WinSet, Top,, A
     }
     Else ; if process doesn't exist, errorLevel = 0
-        run, "C:\Users\Mariana\AppData\Local\Programs\Microsoft VS Code\Code.exe"
+        run, "C:\Users\%A_UserName%\AppData\Local\Programs\Microsoft VS Code\Code.exe"
 Return
 
 ;; restart eclipse from anywhere
@@ -110,7 +89,7 @@ Return
         WinSet, Top,, A
     }
     Else ; if process doesn't exist, errorLevel = 0
-        run, "C:\Users\Mariana\AppData\Local\Amazon Music\Amazon Music.exe"
+        run, "C:\Users\%A_UserName%\AppData\Local\Amazon Music\Amazon Music.exe"
 Return
 
 ; switch to task manager window if open, or start process if not
