@@ -89,7 +89,10 @@ Return
         WinSet, Top,, A
     }
     Else ; if process doesn't exist, errorLevel = 0
-        run, "C:\Users\%A_UserName%\AppData\Local\Amazon Music\Amazon Music.exe"
+        if(A_UserName != "mariana-work")
+            run, "C:\Users\mariana-work\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Amazon Music.lnk"
+        else
+            run, "C:\Users\mvher\AppData\Local\Amazon Music\Amazon Music.exe"
 Return
 
 ; switch to task manager window if open, or start process if not
