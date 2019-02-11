@@ -20,7 +20,11 @@ pullrepos() {
 
 #starts git bash in $HOME/Documents/Repositories, where all git repos are stored
 start_repos() {
-  cd $HOME/Documents/Repositories
+	if [[ `id -u -n` = "mariana-work" ]]; then
+		cd $HOME/Documents;
+	else
+		cd $HOME/Documents/Repositories;
+	fi
 }
 
 
