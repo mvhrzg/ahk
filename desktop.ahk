@@ -12,12 +12,52 @@ IfMsgBox, Yes
     Shutdown, 2 ; shutdown 2 = reboot. shutdown 6 = 2(reboot) + 4(force) = force reboot
 Return 
 
-;; insert "!g sage x3 " in firefox
-::sgx::    ; auto-complete sgx
-if WinActive("ahk_class MozillaWindowClass"){
-     Send, {!}g sage x3 {A_Space}
-}
+; ;; insert "!g sage x3 " in firefox
+; ::sgx::    ; auto-complete sgx
+; if WinActive("ahk_class MozillaWindowClass"){
+;      Send, {!}g sage x3 {A_Space}
+; }
+; Return
+; ----------------------------------------------------------------------------
+/*
+* Browsers
+*/
+; ----------------------------------------------------------------------------
+;; switch to open firefox tab if open. otherwise, open firefox
+#`:: ; Win + `
+    Process, Exist, firefox.exe ; check if firefox is running
+    If (errorLevel){ ; if process exists, switch to window
+        WinActivate, ahk_exe firefox.exe  ; ahk_class MozillaWindowClass
+        WinSet, Top,, A
+    }
+    Else ; if process doesn't exist, errorLevel = 0
+        run, "C:\Program Files\Firefox Developer Edition\firefox.exe"
 Return
+
+;; switch to open edge tab if open. otherwise, open edge
+#q::    ; Win + q to switch to edge
+    Process, Exist, ApplicationFrameHost.exe ; check if edge is running
+    If (errorLevel){ ; if process exists, switch to window
+        WinActivate, ahk_exe ApplicationFrameHost.exe
+        WinMaximize, A
+        WinSet, Top,, A
+    }
+    Else ; if process doesn't exist, errorLevel = 0
+        run, "C:\Windows\System32\ApplicationFrameHost.exe"
+Return
+
+;; switch to open chrome tab if open. otherwise, open chrome
+#c::    ; Win + q to switch to chrome
+    Process, Exist, chrome.exe ; check if chrome is running
+    If (errorLevel){ ; if process exists, switch to window
+        WinActivate, ahk_exe chrome.exe
+        WinMaximize, A
+        WinSet, Top,, A
+    }
+    Else ; if process doesn't exist, errorLevel = 0
+        run, "C:\Program Files (x86)\Google\Chrome\Application\chrome.exe"
+Return
+; [end Broswers]
 
 ; ----------------------------------------------------------------------------
 /*
@@ -32,33 +72,7 @@ Return
         WinSet, Top,, A
     }
     Else ; if process doesn't exist, errorLevel = 0
-        if(A_UserName != "mariana-work")
-            run, "C:\Program Files\Sublime Text 3\sublime_text.exe"
-        else
-            run, "C:\Users\mariana-work\Documents\Work installs\Sublime Text 3\sublime_text.exe"
-Return
-
-;; switch to open firefox tab if open. otherwise, open firefox
-#`:: ; Win + `
-    Process, Exist, firefox.exe ; check if firefox is running
-    If (errorLevel){ ; if process exists, switch to window
-        WinActivate, ahk_exe firefox.exe  ; ahk_class MozillaWindowClass
-        WinSet, Top,, A
-    }
-    Else ; if process doesn't exist, errorLevel = 0
-        run, "C:\Program Files\Firefox Developer Edition\firefox.exe"
-Return
-
-;; switch to open eclipse tab if open. otherwise, open eclipse
-#q::    ; Win + q to switch to eclipse
-    Process, Exist, eclipse.exe ; check if eclipse is running
-    If (errorLevel){ ; if process exists, switch to window
-        WinActivate, ahk_exe eclipse.exe
-        WinMaximize, A
-        WinSet, Top,, A
-    }
-    Else ; if process doesn't exist, errorLevel = 0
-        run, "C:\Program Files (x86)\eclipse\eclipse.exe"
+        run, "C:\Program Files\Sublime Text 3\sublime_text.exe"
 Return
 
 ;; visual studio code
@@ -89,10 +103,7 @@ Return
         WinSet, Top,, A
     }
     Else ; if process doesn't exist, errorLevel = 0
-        if(A_UserName != "mariana-work")
-            run, "C:\Users\mariana-work\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Amazon Music.lnk"
-        else
-            run, "C:\Users\mvher\AppData\Local\Amazon Music\Amazon Music.exe"
+        run, "C:\Users\mvher\AppData\Local\Amazon Music\Amazon Music.exe"
 Return
 
 ; switch to task manager window if open, or start process if not

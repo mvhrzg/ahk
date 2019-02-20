@@ -61,12 +61,14 @@ return
     assignClipboard(false, tempClip)    ; replace initial clip with latest selection (tempClip)
 return
 
-; append lines to clipboard
+; append lines to clipboard (if not in greenshot)
+#IfWinNotActive, ahk_exe Greenshot.exe
 ^+c:: ; Ctrl + Shift + c
     storeClipboard(true)
     copy()
     appendToClipboard(Clipboard)
 Return
+#IfWinNotActive
 
 ; ----------------------------------------------------------------------------
 ; Visual Studio Code
