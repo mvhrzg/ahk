@@ -36,14 +36,15 @@ Return
 
 ;; switch to open edge tab if open. otherwise, open edge
 #q::    ; Win + q to switch to edge
+SetTitleMatchMode, 2    ; a window's title can *contain* the text 
     Process, Exist, ApplicationFrameHost.exe ; check if edge is running
-    If (errorLevel){ ; if process exists, switch to window
+    If (errorLevel && WinExist("Microsoft Edge", "Microsoft Edge")) { ; if process exists, switch to window
         WinActivate, ahk_exe ApplicationFrameHost.exe
         WinMaximize, A
         WinSet, Top,, A
     }
     Else ; if process doesn't exist, errorLevel = 0
-        run, "C:\Windows\System32\ApplicationFrameHost.exe"
+        run, "C:\Windows\SystemApps\Microsoft.MicrosoftEdge_8wekyb3d8bbwe\MicrosoftEdge.exe"
 Return
 
 ;; switch to open chrome tab if open. otherwise, open chrome
