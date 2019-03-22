@@ -38,7 +38,7 @@ Return
 #w:: ; Win + w
     Process, Exist, iexplore.exe ; check if IE is running
     If (errorLevel){ ; if process exists, switch to window
-        WinActivate, ahk_exe iexplore.exe
+        WinActivate, ahk_class IEFrame ;  ahk_exe iexplore.exe
         WinSet, Top,, A
     }
     Else ; if process doesn't exist, errorLevel = 0
