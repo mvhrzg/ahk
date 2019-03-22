@@ -34,6 +34,17 @@ Return
         run, "C:\Program Files\Firefox Developer Edition\firefox.exe"
 Return
 
+;; switch to open IE tab if open. otherwise, open firefox
+#`:: ; Win + `
+    Process, Exist, iexplore.exe ; check if IE is running
+    If (errorLevel){ ; if process exists, switch to window
+        WinActivate, ahk_exe iexplore.exe
+        WinSet, Top,, A
+    }
+    Else ; if process doesn't exist, errorLevel = 0
+        run, "C:\Program Files\internet explorer\iexplore.exe"
+Return
+
 ;; switch to open edge tab if open. otherwise, open edge
 #q::    ; Win + q to switch to edge
 SetTitleMatchMode, 2    ; a window's title can *contain* the text 
@@ -113,7 +124,7 @@ Return
 Return
 
 ;; switch to SSMS
-#w::    ; Win +  w
+#t::    ; Win +  t
     Process, Exist, Ssms.exe ; check if running
     If (errorLevel){ ; if process exists, switch to window
         WinActivate, ahk_exe Ssms.exe
