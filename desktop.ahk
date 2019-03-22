@@ -35,7 +35,7 @@ Return
 Return
 
 ;; switch to open IE tab if open. otherwise, open firefox
-#`:: ; Win + `
+#w:: ; Win + w
     Process, Exist, iexplore.exe ; check if IE is running
     If (errorLevel){ ; if process exists, switch to window
         WinActivate, ahk_exe iexplore.exe
