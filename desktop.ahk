@@ -23,16 +23,28 @@ Return
 * Browsers
 */
 ; ----------------------------------------------------------------------------
-;; switch to open firefox tab if open. otherwise, open firefox
+;; switch to open opera tab if open. otherwise, open opera
 #`:: ; Win + `
-    Process, Exist, firefox.exe ; check if firefox is running
+    Process, Exist, opera.exe ; check if opera is running
     If (errorLevel){ ; if process exists, switch to window
-        WinActivate, ahk_exe firefox.exe  ; ahk_class MozillaWindowClass
+        WinActivate, ahk_exe opera.exe  ;; ahk_class MozillaWindowClass
         WinSet, Top,, A
     }
     Else ; if process doesn't exist, errorLevel = 0
-        run, "C:\Program Files\Firefox Developer Edition\firefox.exe"
+        run, "C:\Users\mars\AppData\Local\Programs\Opera\launcher.exe"
 Return
+
+
+;;;; switch to open firefox tab if open. otherwise, open firefox
+;;#`:: ; Win + `
+;;    Process, Exist, firefox.exe ; check if firefox is running
+;;    If (errorLevel){ ; if process exists, switch to window
+;;        WinActivate, ahk_exe firefox.exe  ; ahk_class MozillaWindowClass
+;;        WinSet, Top,, A
+;;    }
+;;    Else ; if process doesn't exist, errorLevel = 0
+;;        run, "C:\Program Files\Firefox Developer Edition\firefox.exe"
+;;Return
 
 ;; switch to open IE tab if open. otherwise, open firefox
 #w:: ; Win + w
@@ -99,25 +111,6 @@ Return
         run, "C:\Users\%A_UserName%\AppData\Local\Programs\Microsoft VS Code\Code.exe"
 Return
 
-;; restart eclipse from anywhere
-^+q::   ; Ctrl + Shift + q
-    sleep(100)
-    RunWait, taskkill /F /IM eclipse.exe,, Hide
-    sleep(1000)
-    Run, "C:\Program Files (x86)\eclipse\eclipse.exe"
-Return
-
-;; switch to open amazon music window
-#LAlt::    ; Win + leftAlt
-    Process, Exist, "Amazon Music.exe" ; check if amazon music is running
-    If (errorLevel){ ; if process exists, switch to window
-        WinActivate, ahk_exe "Amazon Music.exe" ; ahk_class Amazon Music
-        WinSet, Top,, A
-    }
-    Else ; if process doesn't exist, errorLevel = 0
-        run, "C:\Users\mvher\AppData\Local\Amazon Music\Amazon Music.exe"
-Return
-
 ; switch to task manager window if open, or start process if not
 !Esc::  ; Alt + Esc
     Send, ^+{Esc}
@@ -143,17 +136,6 @@ Return
     }
     Else ; if process doesn't exist, errorLevel = 0
         run, "C:\Program Files (x86)\Microsoft Office\root\Office16\OUTLOOK.EXE"
-Return
-
-;; switch to chrome
-#+`::   ; Win + Shift + `
-    Process, Exist, chrome.exe ; check if running
-    If (errorLevel){ ; if process exists, switch to window
-        WinActivate, ahk_exe chrome.exe
-        WinSet, Top,, A
-    }
-    Else ; if process doesn't exist, errorLevel = 0
-        run, "C:\Program Files (x86)\Google\Chrome\Application\chrome.exe"
 Return
 
 ;; <<<<<<<< cycle through windows of same class >>>>>>>>
