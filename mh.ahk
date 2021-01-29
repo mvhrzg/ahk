@@ -1,3 +1,8 @@
+#SingleInstance, force
+; if not(A_IsAdmin){
+;     MsgBox, % A_ScriptFullPath
+;     Run *RunAs "%A_ScriptFullPath%"
+; }
 #Include, %A_ScriptDir%\helpers.ahk
 #Include, %A_ScriptDir%\eclipse.ahk
 #Include, %A_ScriptDir%\eclipseHelper.ahk
@@ -5,7 +10,6 @@
 #Include, %A_ScriptDir%\mintty.ahk
 #Include, %A_ScriptDir%\text.ahk
 SendMode, Input
-#SingleInstance, force
 #WinActivateForce
 
 #z:: WinMaximize A ; Alt + F2 - maximize current window
