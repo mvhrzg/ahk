@@ -12,12 +12,11 @@ IfMsgBox, Yes
     Shutdown, 2 ; shutdown 2 = reboot. shutdown 6 = 2(reboot) + 4(force) = force reboot
 Return 
 
-; ;; insert "!g sage x3 " in firefox
-; ::sgx::    ; auto-complete sgx
-; if WinActive("ahk_class MozillaWindowClass"){
-;      Send, {!}g sage x3 {A_Space}
-; }
-; Return
+;; get current window's path information
+f1::
+    WinGet, activePath, ProcessPath, % "ahk_id" winActive("A")  ; activePath is the output variable and can be named anything you like, ProcessPath is a fixed parameter, specifying the action of the winget command.
+    msgbox % activePath
+return
 ; ----------------------------------------------------------------------------
 /*
 * Browsers
@@ -34,52 +33,15 @@ Return
         run, "C:\Users\mars\AppData\Local\Programs\Opera\launcher.exe"
 Return
 
-
-;;;; switch to open firefox tab if open. otherwise, open firefox
-;;#`:: ; Win + `
-;;    Process, Exist, firefox.exe ; check if firefox is running
-;;    If (errorLevel){ ; if process exists, switch to window
-;;        WinActivate, ahk_exe firefox.exe  ; ahk_class MozillaWindowClass
-;;        WinSet, Top,, A
-;;    }
-;;    Else ; if process doesn't exist, errorLevel = 0
-;;        run, "C:\Program Files\Firefox Developer Edition\firefox.exe"
-;;Return
-
-;; switch to open IE tab if open. otherwise, open firefox
-#w:: ; Win + w
-    Process, Exist, iexplore.exe ; check if IE is running
-    If (errorLevel){ ; if process exists, switch to window
-        WinActivate, ahk_class IEFrame ;  ahk_exe iexplore.exe
-        WinSet, Top,, A
-    }
-    Else ; if process doesn't exist, errorLevel = 0
-        run, "C:\Program Files\internet explorer\iexplore.exe"
-Return
-
-;; switch to open edge tab if open. otherwise, open edge
-#q::    ; Win + q to switch to edge
-SetTitleMatchMode, 2    ; a window's title can *contain* the text 
-    Process, Exist, ApplicationFrameHost.exe ; check if edge is running
-    If (errorLevel && WinExist("Microsoft Edge", "Microsoft Edge")) { ; if process exists, switch to window
-        WinActivate, ahk_exe ApplicationFrameHost.exe
-        WinMaximize, A
-        WinSet, Top,, A
-    }
-    Else ; if process doesn't exist, errorLevel = 0
-        run, "C:\Windows\SystemApps\Microsoft.MicrosoftEdge_8wekyb3d8bbwe\MicrosoftEdge.exe"
-Return
-
 ;; switch to open chrome tab if open. otherwise, open chrome
-#c::    ; Win + q to switch to chrome
+#c::    ; Win + c to switch to chrome
     Process, Exist, chrome.exe ; check if chrome is running
     If (errorLevel){ ; if process exists, switch to window
         WinActivate, ahk_exe chrome.exe
-        WinMaximize, A
         WinSet, Top,, A
     }
     Else ; if process doesn't exist, errorLevel = 0
-        run, "C:\Program Files (x86)\Google\Chrome\Application\chrome.exe"
+        run, "C:\Program Files\Google\Chrome\Application\chrome.exe"
 Return
 ; [end Broswers]
 
@@ -127,16 +89,50 @@ Return
         run, "C:\Program Files (x86)\Microsoft SQL Server\140\Tools\Binn\ManagementStudio\Ssms.exe"
 Return
 
-;; switch to Outlook
+;; switch to or open Mail app
 #o::    ; Win +  o
-    Process, Exist, OUTLOOK.EXE ; check if running
-    If (errorLevel){ ; if process exists, switch to window
-        WinActivate, ahk_exe OUTLOOK.EXE
+    SetTitleMatchMode, 2
+    Process, Exist, HxOutlook.exe
+    If (errorLevel) {
+        WinActivate, ahk_class ApplicationFrameWindow, Mail ; ahk_exe HxOutlook.exe
         WinSet, Top,, A
     }
-    Else ; if process doesn't exist, errorLevel = 0
-        run, "C:\Program Files (x86)\Microsoft Office\root\Office16\OUTLOOK.EXE"
+    Else
+    run, outlookmail:
+    ; run, explorer.exe "appsFolder\microsoft.windowscommunicationsapps_16005.13426.20566.0_x64__8wekyb3d8bbwe.packagefamilyname!microsoft.windowslive.mail"
 Return
+
+;; switch to or open Calendar app
+#q::    ; Win + q
+    SetTitleMatchMode, 2 
+    Process, Exist, HxCalendarAppImm.exe
+    If (errorLevel) {
+        WinActivate, ahk_class ApplicationFrameWindow, Calendar ; ahk_exe HxOutlook.exe
+        WinSet, Top,, A
+    }
+    Else
+        run, outlookcal:
+        ; run, "shell:appsFolder\microsoft.windowscommunicationsapps_16005.13426.20566.0_x64__8wekyb3d8bbwe.packagefamilyname!microsoft.windowslive.calendar"
+Return
+
+; ----------------------------------------------------------------------------
+;; [POWERSHELL SCRIPT TO FIND EXECUTABLE OF STORE APP]
+; ** NOTE: Found "Protocol" name in "C:\Program Files\WindowsApps\microsoft.windowscommunicationsapps_16005.13426.20566.0_x64__8wekyb3d8bbwe\AppxManifest.xml"
+
+; $appName = Read-Host "App name"
+; $installedapps = get-AppxPackage
+; foreach ($app in $installedapps)
+; {
+;     foreach ($id in (Get-AppxPackageManifest $app).package.applications.application.id)
+;     {
+        
+;         $line = $app.Name + " = " + $app.packagefamilyname + "!" + $id
+;         if ($line.IndexOf($appName, [System.StringComparison]::CurrentCultureIgnoreCase) -ge 0) {
+;             echo "shell:appsFolder\$app.packagefamilyname!$id" 
+;         }
+;     }
+; }
+; ----------------------------------------------------------------------------
 
 ;; <<<<<<<< cycle through windows of same class >>>>>>>>
 ^CapsLock:: ; Win + Capslock : switch between windows of the same class
@@ -146,7 +142,7 @@ If Instances > 1
     WinActivateBottom, ahk_class %CurrentActive%
 return
 
-#PgDn:: ; Wing + PgDn : next window
+#PgDn:: ; Win + PgDn : next window
 WinGet, exe, ProcessName, A
 WinGet, Instances, Count, ahk_exe %exe%
 If Instances > 1
@@ -154,7 +150,7 @@ If Instances > 1
 WinActivate, ahk_exe %exe%
 return
 
-#PgUp:: ; Wing + PgUp : previous window
+#PgUp:: ; Win + PgUp : previous window
 ; WinGetClass, CurrentActive, A
 WinGet, exe, ProcessName, A
 WinGet, Instances, Count, ahk_exe %exe%

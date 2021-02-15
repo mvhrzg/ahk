@@ -16,7 +16,6 @@ SendMode, Input
 #x:: WinMinimize A ; Alt + F2 - minimize current window
 
 ;; clears clipboard
-
 !BackSpace:: ; Alt + Backspace
     clearClipboard()    ; clear it
 Return
@@ -28,7 +27,7 @@ Return
 
 ;; reload mh.ahk from any .ahk script
 #ifWinActive ahk_class PX_WINDOW_CLASS
-^!s::   ; Ctrl + Alt + s
+^+!s::   ; Ctrl + Shift + Alt + s
     WinGetActiveTitle, currentWindow
     StringGetPos, findSlash, currentWindow, \ , R1 ; gets the position of the last character before "\"
     currentScript := SubStr(currentWindow, findSlash + 2)  ; + 2 to forget the last character before "\" and also "\"
@@ -46,3 +45,14 @@ Return
     }
 Return
 #IfWinActive
+
+;;
+^!r::   ; ctrl+alt+r
+    InputBox, name,, what is your name?
+    StringLower, name, name
+    if(name = "remy" || name = "rems" || name = "rem") {
+        MsgBox, Mars loves you
+    } else {
+        MsgBox, Mars does not love you
+    }
+Return
