@@ -92,29 +92,11 @@ Return
 ;; switch to or open Mail app
 #o::    ; Win +  o
     run, outlookmail:
-    ; SetTitleMatchMode, 2
-    ; Process, Exist, HxOutlook.exe
-    ; If (errorLevel) {
-    ;     WinActivate, ahk_class ApplicationFrameWindow, Mail ; ahk_exe HxOutlook.exe
-    ;     WinSet, Top,, A
-    ; }
-    ; Else
-    ; run, outlookmail:
-    ; ; run, explorer.exe "appsFolder\microsoft.windowscommunicationsapps_16005.13426.20566.0_x64__8wekyb3d8bbwe.packagefamilyname!microsoft.windowslive.mail"
 Return
 
 ;; switch to or open Calendar app
 #q::    ; Win + q
     run, outlookcal:
-    ; SetTitleMatchMode, 2 
-    ; Process, Exist, HxCalendarAppImm.exe
-    ; If (errorLevel) {
-    ;     WinActivate, ahk_class ApplicationFrameWindow, Calendar ; ahk_exe HxOutlook.exe
-    ;     WinSet, Top,, A
-    ; }
-    ; Else
-    ;     run, outlookcal:
-    ;     ; run, "shell:appsFolder\microsoft.windowscommunicationsapps_16005.13426.20566.0_x64__8wekyb3d8bbwe.packagefamilyname!microsoft.windowslive.calendar"
 Return
 
 ; ----------------------------------------------------------------------------
