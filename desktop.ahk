@@ -10,7 +10,7 @@ SendMode, Input
 MsgBox, 4,, Would you like to restart the computer?
 IfMsgBox, Yes
     Shutdown, 2 ; shutdown 2 = reboot. shutdown 6 = 2(reboot) + 4(force) = force reboot
-Return 
+Return
 
 ;; get current window's path information
 f1::

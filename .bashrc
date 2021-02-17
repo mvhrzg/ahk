@@ -1,5 +1,7 @@
 SSH_ENV=$HOME/.ssh/environment
 
+ECHO HELLO
+
 pullrepos() {
   start_repos;  # cd into the repositories folder
   
