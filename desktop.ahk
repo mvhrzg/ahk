@@ -13,7 +13,7 @@ IfMsgBox, Yes
 Return
 
 ;; get current window's path information
-f1::
+!f1::
     WinGet, activePath, ProcessPath, % "ahk_id" winActive("A")  ; activePath is the output variable and can be named anything you like, ProcessPath is a fixed parameter, specifying the action of the winget command.
     msgbox % activePath
 return
@@ -47,7 +47,7 @@ Return
 
 ; ----------------------------------------------------------------------------
 /*
-* Taskbar hotkeys
+* Programs hotkeys
 */
 ; ----------------------------------------------------------------------------
 ;; switch to open sublime tab if open. otherwise, open sublime
@@ -120,26 +120,26 @@ Return
 
 ;; <<<<<<<< cycle through windows of same class >>>>>>>>
 ^CapsLock:: ; Win + Capslock : switch between windows of the same class
-WinGetClass, CurrentActive, A
-WinGet, Instances, Count, ahk_class %CurrentActive%
-If Instances > 1
-    WinActivateBottom, ahk_class %CurrentActive%
+    WinGetClass, CurrentActive, A
+    WinGet, Instances, Count, ahk_class %CurrentActive%
+    If Instances > 1
+        WinActivateBottom, ahk_class %CurrentActive%
 return
 
 #PgDn:: ; Win + PgDn : next window
-WinGet, exe, ProcessName, A
-WinGet, Instances, Count, ahk_exe %exe%
-If Instances > 1
-    WinSet, Bottom,, A
-WinActivate, ahk_exe %exe%
+    WinGet, exe, ProcessName, A
+    WinGet, Instances, Count, ahk_exe %exe%
+    If Instances > 1
+        WinSet, Bottom,, A
+    WinActivate, ahk_exe %exe%
 return
 
 #PgUp:: ; Win + PgUp : previous window
-; WinGetClass, CurrentActive, A
-WinGet, exe, ProcessName, A
-WinGet, Instances, Count, ahk_exe %exe%
-If Instances > 1
-    WinActivateBottom, ahk_exe %exe%
+    ; WinGetClass, CurrentActive, A
+    WinGet, exe, ProcessName, A
+    WinGet, Instances, Count, ahk_exe %exe%
+    If Instances > 1
+        WinActivateBottom, ahk_exe %exe%
 return
 ;; <<<<<<<< [end] cycle windows of same class >>>>>>>>
 
